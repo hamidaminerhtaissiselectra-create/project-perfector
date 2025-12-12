@@ -26,6 +26,9 @@ import Referral from "./pages/Referral";
 import NotFound from "./pages/NotFound";
 import LocalZone from "./pages/LocalZone";
 import AllZones from "./pages/AllZones";
+import MentionsLegales from "./pages/MentionsLegales";
+import CGU from "./pages/CGU";
+import Confidentialite from "./pages/Confidentialite";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +75,10 @@ const App = () => (
             <Route path="/zones" element={<AllZones />} />
             <Route path="/zone/:slug" element={<LocalZone />} />
             <Route path="/zone/:slug/:service" element={<LocalZone />} />
+            {/* Legal Pages */}
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
+            <Route path="/cgu" element={<CGU />} />
+            <Route path="/confidentialite" element={<Confidentialite />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
