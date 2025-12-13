@@ -14,16 +14,497 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          address: string | null
+          cancellation_reason: string | null
+          cancelled_by: string | null
+          city: string | null
+          created_at: string | null
+          dog_id: string
+          duration_minutes: number | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          notes: string | null
+          owner_confirmed: boolean | null
+          owner_id: string
+          price: number | null
+          scheduled_date: string
+          scheduled_time: string
+          service_type: Database["public"]["Enums"]["service_type"]
+          status: Database["public"]["Enums"]["booking_status"] | null
+          updated_at: string | null
+          walker_confirmed: boolean | null
+          walker_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          cancellation_reason?: string | null
+          cancelled_by?: string | null
+          city?: string | null
+          created_at?: string | null
+          dog_id: string
+          duration_minutes?: number | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          notes?: string | null
+          owner_confirmed?: boolean | null
+          owner_id: string
+          price?: number | null
+          scheduled_date: string
+          scheduled_time: string
+          service_type?: Database["public"]["Enums"]["service_type"]
+          status?: Database["public"]["Enums"]["booking_status"] | null
+          updated_at?: string | null
+          walker_confirmed?: boolean | null
+          walker_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          cancellation_reason?: string | null
+          cancelled_by?: string | null
+          city?: string | null
+          created_at?: string | null
+          dog_id?: string
+          duration_minutes?: number | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          notes?: string | null
+          owner_confirmed?: boolean | null
+          owner_id?: string
+          price?: number | null
+          scheduled_date?: string
+          scheduled_time?: string
+          service_type?: Database["public"]["Enums"]["service_type"]
+          status?: Database["public"]["Enums"]["booking_status"] | null
+          updated_at?: string | null
+          walker_confirmed?: boolean | null
+          walker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_dog_id_fkey"
+            columns: ["dog_id"]
+            isOneToOne: false
+            referencedRelation: "dogs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dogs: {
+        Row: {
+          age: number | null
+          breed: string | null
+          created_at: string | null
+          id: string
+          is_neutered: boolean | null
+          name: string
+          owner_id: string
+          photo_url: string | null
+          size: Database["public"]["Enums"]["dog_size"] | null
+          special_needs: string | null
+          temperament: string | null
+          updated_at: string | null
+          vaccinations_up_to_date: boolean | null
+          weight: number | null
+        }
+        Insert: {
+          age?: number | null
+          breed?: string | null
+          created_at?: string | null
+          id?: string
+          is_neutered?: boolean | null
+          name: string
+          owner_id: string
+          photo_url?: string | null
+          size?: Database["public"]["Enums"]["dog_size"] | null
+          special_needs?: string | null
+          temperament?: string | null
+          updated_at?: string | null
+          vaccinations_up_to_date?: boolean | null
+          weight?: number | null
+        }
+        Update: {
+          age?: number | null
+          breed?: string | null
+          created_at?: string | null
+          id?: string
+          is_neutered?: boolean | null
+          name?: string
+          owner_id?: string
+          photo_url?: string | null
+          size?: Database["public"]["Enums"]["dog_size"] | null
+          special_needs?: string | null
+          temperament?: string | null
+          updated_at?: string | null
+          vaccinations_up_to_date?: boolean | null
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      favorites: {
+        Row: {
+          created_at: string | null
+          id: string
+          user_id: string
+          walker_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user_id: string
+          walker_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user_id?: string
+          walker_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          booking_id: string | null
+          content: string
+          created_at: string | null
+          id: string
+          read: boolean | null
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          booking_id?: string | null
+          content: string
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          booking_id?: string | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          receiver_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          link: string | null
+          message: string
+          read: boolean | null
+          title: string
+          type: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          link?: string | null
+          message: string
+          read?: boolean | null
+          title: string
+          type?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          link?: string | null
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          avatar_url: string | null
+          bio: string | null
+          city: string | null
+          created_at: string | null
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone: string | null
+          postal_code: string | null
+          updated_at: string | null
+          user_type: Database["public"]["Enums"]["user_type"] | null
+        }
+        Insert: {
+          address?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string | null
+          email?: string | null
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          updated_at?: string | null
+          user_type?: Database["public"]["Enums"]["user_type"] | null
+        }
+        Update: {
+          address?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          updated_at?: string | null
+          user_type?: Database["public"]["Enums"]["user_type"] | null
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          referral_code: string
+          referred_id: string | null
+          referrer_id: string
+          reward_amount: number | null
+          status: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code: string
+          referred_id?: string | null
+          referrer_id: string
+          reward_amount?: number | null
+          status?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code?: string
+          referred_id?: string | null
+          referrer_id?: string
+          reward_amount?: number | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          booking_id: string
+          comment: string | null
+          created_at: string | null
+          id: string
+          rating: number
+          reviewed_id: string
+          reviewer_id: string
+        }
+        Insert: {
+          booking_id: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating: number
+          reviewed_id: string
+          reviewer_id: string
+        }
+        Update: {
+          booking_id?: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating?: number
+          reviewed_id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      walker_earnings: {
+        Row: {
+          amount: number
+          booking_id: string | null
+          commission: number | null
+          created_at: string | null
+          id: string
+          net_amount: number
+          paid_at: string | null
+          status: string | null
+          walker_id: string
+        }
+        Insert: {
+          amount: number
+          booking_id?: string | null
+          commission?: number | null
+          created_at?: string | null
+          id?: string
+          net_amount: number
+          paid_at?: string | null
+          status?: string | null
+          walker_id: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string | null
+          commission?: number | null
+          created_at?: string | null
+          id?: string
+          net_amount?: number
+          paid_at?: string | null
+          status?: string | null
+          walker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "walker_earnings_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      walker_profiles: {
+        Row: {
+          available_days: string[] | null
+          available_hours_end: string | null
+          available_hours_start: string | null
+          created_at: string | null
+          experience_years: number | null
+          hourly_rate: number | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          max_dogs: number | null
+          rating: number | null
+          service_radius_km: number | null
+          services: Database["public"]["Enums"]["service_type"][] | null
+          total_reviews: number | null
+          total_walks: number | null
+          updated_at: string | null
+          user_id: string
+          verified: boolean | null
+        }
+        Insert: {
+          available_days?: string[] | null
+          available_hours_end?: string | null
+          available_hours_start?: string | null
+          created_at?: string | null
+          experience_years?: number | null
+          hourly_rate?: number | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          max_dogs?: number | null
+          rating?: number | null
+          service_radius_km?: number | null
+          services?: Database["public"]["Enums"]["service_type"][] | null
+          total_reviews?: number | null
+          total_walks?: number | null
+          updated_at?: string | null
+          user_id: string
+          verified?: boolean | null
+        }
+        Update: {
+          available_days?: string[] | null
+          available_hours_end?: string | null
+          available_hours_start?: string | null
+          created_at?: string | null
+          experience_years?: number | null
+          hourly_rate?: number | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          max_dogs?: number | null
+          rating?: number | null
+          service_radius_km?: number | null
+          services?: Database["public"]["Enums"]["service_type"][] | null
+          total_reviews?: number | null
+          total_walks?: number | null
+          updated_at?: string | null
+          user_id?: string
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      booking_status:
+        | "pending"
+        | "confirmed"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
+      dog_size: "small" | "medium" | "large" | "giant"
+      service_type: "promenade" | "garde" | "visite" | "veterinaire"
+      user_type: "owner" | "walker" | "both"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +631,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      booking_status: [
+        "pending",
+        "confirmed",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
+      dog_size: ["small", "medium", "large", "giant"],
+      service_type: ["promenade", "garde", "visite", "veterinaire"],
+      user_type: ["owner", "walker", "both"],
+    },
   },
 } as const
