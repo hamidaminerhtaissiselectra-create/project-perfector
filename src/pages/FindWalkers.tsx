@@ -12,10 +12,25 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
+interface WalkerWithProfile {
+  id: string;
+  user_id: string;
+  hourly_rate: number | null;
+  rating: number | null;
+  total_reviews: number | null;
+  verified: boolean | null;
+  services: string[] | null;
+  experience_years: number | null;
+  bio?: string;
+  first_name?: string;
+  avatar_url?: string;
+  city?: string;
+}
+
 const FindWalkers = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [walkers, setWalkers] = useState<any[]>([]);
+  const [walkers, setWalkers] = useState<WalkerWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchCity, setSearchCity] = useState(searchParams.get('location') || '');
   const [selectedService, setSelectedService] = useState(searchParams.get('service') || 'all');
@@ -24,12 +39,9 @@ const FindWalkers = () => {
   const services = [
     { value: 'all', label: 'Tous les services' },
     { value: 'promenade', label: 'Promenade' },
-    { value: 'visite_domicile', label: 'Visite à domicile' },
-    { value: 'hebergement_nuit', label: 'Hébergement nuit' },
-    { value: 'hebergement_jour', label: 'Garderie de jour' },
-    { value: 'garde_domicile', label: 'Garde à domicile' },
-    { value: 'visite_sanitaire', label: 'Visite sanitaire' },
-    { value: 'accompagnement_veterinaire', label: 'Accompagnement vétérinaire' },
+    { value: 'visite', label: 'Visite à domicile' },
+    { value: 'garde', label: 'Garde' },
+    { value: 'veterinaire', label: 'Accompagnement vétérinaire' },
   ];
 
   useEffect(() => {
@@ -38,37 +50,56 @@ const FindWalkers = () => {
 
   const fetchWalkers = async () => {
     try {
+      // Fetch walker profiles
       let query = supabase
-        .from('walker_public_info')
+        .from('walker_profiles')
         .select('*');
 
       if (sortBy === 'rating') {
-        query = query.order('rating', { ascending: false });
+        query = query.order('rating', { ascending: false, nullsFirst: false });
       } else if (sortBy === 'price') {
-        query = query.order('hourly_rate', { ascending: true });
+        query = query.order('hourly_rate', { ascending: true, nullsFirst: false });
       } else if (sortBy === 'reviews') {
-        query = query.order('total_reviews', { ascending: false });
+        query = query.order('total_reviews', { ascending: false, nullsFirst: false });
       }
 
-      const { data, error } = await query;
+      const { data: walkerProfiles, error } = await query;
 
       if (error) throw error;
 
-      let filtered = data || [];
+      if (!walkerProfiles || walkerProfiles.length === 0) {
+        setWalkers([]);
+        return;
+      }
+
+      // Get user ids to fetch profile info
+      const userIds = walkerProfiles.map(w => w.user_id);
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, first_name, avatar_url, city, bio')
+        .in('id', userIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+      // Merge walker profiles with user profiles
+      let merged: WalkerWithProfile[] = walkerProfiles.map(wp => ({
+        ...wp,
+        ...profileMap.get(wp.user_id)
+      }));
       
       // Filter by service if needed
       if (selectedService !== 'all') {
-        filtered = filtered.filter(w => w.services?.includes(selectedService));
+        merged = merged.filter(w => w.services?.includes(selectedService));
       }
 
       // Filter by city
       if (searchCity) {
-        filtered = filtered.filter(w => 
+        merged = merged.filter(w => 
           w.city?.toLowerCase().includes(searchCity.toLowerCase())
         );
       }
 
-      setWalkers(filtered);
+      setWalkers(merged);
     } catch (error: any) {
       toast({
         title: "Erreur",
@@ -208,13 +239,13 @@ const FindWalkers = () => {
                           👤
                         </div>
                       )}
-                      {walker.is_verified && (
+                      {walker.verified && (
                         <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full p-1">
                           <CheckCircle className="h-4 w-4" />
                         </div>
                       )}
                     </div>
-                    <h3 className="text-xl font-bold mt-4">{walker.first_name}</h3>
+                    <h3 className="text-xl font-bold mt-4">{walker.first_name || 'Promeneur'}</h3>
                     {walker.city && (
                       <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mt-1">
                         <MapPin className="h-3 w-3" />
@@ -232,7 +263,7 @@ const FindWalkers = () => {
                           <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
                           <span className="font-bold text-amber-700 dark:text-amber-400">{walker.rating || '0.0'}</span>
                         </div>
-                        {walker.total_reviews > 0 && (
+                        {(walker.total_reviews || 0) > 0 && (
                           <span className="text-sm text-muted-foreground">({walker.total_reviews} avis)</span>
                         )}
                       </div>
@@ -276,7 +307,7 @@ const FindWalkers = () => {
                         <span className="text-2xl font-bold text-primary">{walker.hourly_rate || 15}€</span>
                         <span className="text-sm text-muted-foreground">/30min</span>
                       </div>
-                      <Button onClick={() => navigate(`/book/${walker.id}`)}>
+                      <Button onClick={() => navigate(`/book/${walker.user_id}`)}>
                         Réserver
                       </Button>
                     </div>

@@ -13,9 +13,9 @@ interface Notification {
   id: string;
   title: string;
   message: string;
-  type: string;
-  is_read: boolean;
-  created_at: string;
+  type: string | null;
+  read: boolean | null;
+  created_at: string | null;
 }
 
 export const NotificationBell = () => {
@@ -37,7 +37,7 @@ export const NotificationBell = () => {
 
       if (!error && data) {
         setNotifications(data);
-        setUnreadCount(data.filter(n => !n.is_read).length);
+        setUnreadCount(data.filter(n => !n.read).length);
       }
     };
 
@@ -69,12 +69,12 @@ export const NotificationBell = () => {
   const markAsRead = async (id: string) => {
     const { error } = await supabase
       .from('notifications')
-      .update({ is_read: true })
+      .update({ read: true })
       .eq('id', id);
 
     if (!error) {
       setNotifications(prev =>
-        prev.map(n => n.id === id ? { ...n, is_read: true } : n)
+        prev.map(n => n.id === id ? { ...n, read: true } : n)
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
     }
@@ -86,17 +86,18 @@ export const NotificationBell = () => {
 
     const { error } = await supabase
       .from('notifications')
-      .update({ is_read: true })
+      .update({ read: true })
       .eq('user_id', session.user.id)
-      .eq('is_read', false);
+      .eq('read', false);
 
     if (!error) {
-      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
       setUnreadCount(0);
     }
   };
 
-  const getTimeAgo = (dateString: string) => {
+  const getTimeAgo = (dateString: string | null) => {
+    if (!dateString) return "";
     const date = new Date(dateString);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -110,7 +111,7 @@ export const NotificationBell = () => {
     return `Il y a ${days}j`;
   };
 
-  const getNotificationIcon = (type: string) => {
+  const getNotificationIcon = (type: string | null) => {
     switch (type) {
       case 'booking': return '📅';
       case 'message': return '💬';
@@ -158,18 +159,18 @@ export const NotificationBell = () => {
                 <div
                   key={notification.id}
                   className={`p-3 hover:bg-muted/50 cursor-pointer transition-colors ${
-                    !notification.is_read ? 'bg-primary/5' : ''
+                    !notification.read ? 'bg-primary/5' : ''
                   }`}
-                  onClick={() => !notification.is_read && markAsRead(notification.id)}
+                  onClick={() => !notification.read && markAsRead(notification.id)}
                 >
                   <div className="flex gap-3">
                     <span className="text-lg">{getNotificationIcon(notification.type)}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <p className={`text-sm font-medium truncate ${!notification.is_read ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        <p className={`text-sm font-medium truncate ${!notification.read ? 'text-foreground' : 'text-muted-foreground'}`}>
                           {notification.title}
                         </p>
-                        {!notification.is_read && (
+                        {!notification.read && (
                           <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-1.5" />
                         )}
                       </div>
