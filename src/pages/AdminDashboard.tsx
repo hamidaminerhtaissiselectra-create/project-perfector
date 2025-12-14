@@ -32,7 +32,6 @@ const AdminDashboard = () => {
     commission: 0,
     averageBookingValue: 0
   });
-  const [pendingDocuments, setPendingDocuments] = useState<any[]>([]);
   const [recentBookings, setRecentBookings] = useState<any[]>([]);
   const [recentUsers, setRecentUsers] = useState<any[]>([]);
 
@@ -80,31 +79,22 @@ const AdminDashboard = () => {
       // Count walker verification status
       const { data: walkerProfiles } = await supabase
         .from('walker_profiles')
-        .select('is_verified');
+        .select('verified');
 
-      const activeWalkers = walkerProfiles?.filter(w => w.is_verified).length || 0;
-      const pendingWalkers = walkerProfiles?.filter(w => !w.is_verified).length || 0;
+      const activeWalkers = walkerProfiles?.filter(w => w.verified).length || 0;
+      const pendingWalkers = walkerProfiles?.filter(w => !w.verified).length || 0;
 
       // Bookings stats
       const { data: bookingsData } = await supabase
         .from('bookings')
-        .select('status, total_price, created_at');
+        .select('status, price, created_at');
 
       const completed = bookingsData?.filter(b => b.status === 'completed') || [];
       const pending = bookingsData?.filter(b => b.status === 'pending') || [];
       const cancelled = bookingsData?.filter(b => b.status === 'cancelled') || [];
       
-      const revenue = completed.reduce((sum, b) => sum + Number(b.total_price), 0);
+      const revenue = completed.reduce((sum, b) => sum + Number(b.price || 0), 0);
       const commission = revenue * 0.13;
-
-      // Pending documents
-      const { data: docsData } = await supabase
-        .from('walker_documents')
-        .select('*, profiles:walker_id(first_name, last_name, email)')
-        .eq('verification_status', 'pending')
-        .order('created_at', { ascending: false })
-        .limit(10);
-      setPendingDocuments(docsData || []);
 
       // Recent bookings
       const { data: recentBookingsData } = await supabase
@@ -141,42 +131,6 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleDocumentAction = async (docId: string, action: 'approved' | 'rejected', reason?: string) => {
-    try {
-      const updateData: any = {
-        verification_status: action,
-        verified_at: new Date().toISOString()
-      };
-      if (reason) updateData.rejection_reason = reason;
-
-      const { error } = await supabase
-        .from('walker_documents')
-        .update(updateData)
-        .eq('id', docId);
-
-      if (error) throw error;
-
-      toast({
-        title: action === 'approved' ? "Document approuvé" : "Document refusé",
-        description: "Le promeneur sera notifié"
-      });
-
-      fetchAdminStats();
-    } catch (error: any) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    }
-  };
-
-  const getDocTypeLabel = (type: string) => {
-    const types: Record<string, string> = {
-      id_card: "Carte d'identité",
-      criminal_record: "Casier judiciaire",
-      insurance: "Assurance RC",
-      photo: "Photo de profil"
-    };
-    return types[type] || type;
   };
 
   const getStatusBadge = (status: string) => {
@@ -276,90 +230,12 @@ const AdminDashboard = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="documents" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="documents" className="relative">
-              Documents
-              {pendingDocuments.length > 0 && (
-                <Badge variant="destructive" className="ml-2 px-1.5 text-xs">
-                  {pendingDocuments.length}
-                </Badge>
-              )}
-            </TabsTrigger>
+        <Tabs defaultValue="bookings" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="bookings">Réservations</TabsTrigger>
             <TabsTrigger value="users">Utilisateurs</TabsTrigger>
             <TabsTrigger value="stats">Statistiques</TabsTrigger>
           </TabsList>
-
-          {/* Documents Tab */}
-          <TabsContent value="documents">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  Documents en attente de vérification
-                </CardTitle>
-                <CardDescription>
-                  {pendingDocuments.length} document(s) à vérifier
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {pendingDocuments.length === 0 ? (
-                  <div className="text-center py-12">
-                    <CheckCircle className="h-16 w-16 mx-auto mb-4 text-primary opacity-50" />
-                    <h3 className="font-semibold mb-2">Tous les documents sont traités</h3>
-                    <p className="text-muted-foreground">Aucun document en attente de vérification</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {pendingDocuments.map(doc => (
-                      <div key={doc.id} className="flex items-center justify-between p-4 border rounded-xl">
-                        <div className="flex items-center gap-4">
-                          <Avatar>
-                            <AvatarFallback>
-                              {doc.profiles?.first_name?.charAt(0)}{doc.profiles?.last_name?.charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-semibold">
-                              {doc.profiles?.first_name} {doc.profiles?.last_name}
-                            </p>
-                            <p className="text-sm text-muted-foreground">{doc.profiles?.email}</p>
-                            <Badge variant="outline" className="mt-1">
-                              {getDocTypeLabel(doc.document_type)}
-                            </Badge>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm" asChild>
-                            <a href={doc.file_url} target="_blank" rel="noopener noreferrer">
-                              <Eye className="h-4 w-4 mr-1" />
-                              Voir
-                            </a>
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            onClick={() => handleDocumentAction(doc.id, 'approved')}
-                          >
-                            <CheckCircle className="h-4 w-4 mr-1" />
-                            Approuver
-                          </Button>
-                          <Button 
-                            variant="destructive" 
-                            size="sm"
-                            onClick={() => handleDocumentAction(doc.id, 'rejected', 'Document non conforme')}
-                          >
-                            <XCircle className="h-4 w-4 mr-1" />
-                            Refuser
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           {/* Bookings Tab */}
           <TabsContent value="bookings">
@@ -368,22 +244,29 @@ const AdminDashboard = () => {
                 <CardTitle>Dernières réservations</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {recentBookings.map(booking => (
-                    <div key={booking.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <p className="font-semibold">{booking.dogs?.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(booking.booking_date).toLocaleDateString('fr-FR')} à {booking.start_time}
-                        </p>
+                {recentBookings.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Calendar className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+                    <p className="text-muted-foreground">Aucune réservation pour le moment</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {recentBookings.map(booking => (
+                      <div key={booking.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <p className="font-semibold">{booking.dogs?.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {new Date(booking.scheduled_date).toLocaleDateString('fr-FR')} à {booking.scheduled_time}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          {getStatusBadge(booking.status)}
+                          <span className="font-bold">{Number(booking.price || 0).toFixed(2)}€</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        {getStatusBadge(booking.status)}
-                        <span className="font-bold">{Number(booking.total_price).toFixed(2)}€</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -395,32 +278,39 @@ const AdminDashboard = () => {
                 <CardTitle>Derniers utilisateurs inscrits</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {recentUsers.map(user => (
-                    <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage src={user.avatar_url} />
-                          <AvatarFallback>
-                            {user.first_name?.charAt(0)}{user.last_name?.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-semibold">{user.first_name} {user.last_name}</p>
-                          <p className="text-sm text-muted-foreground">{user.email}</p>
+                {recentUsers.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+                    <p className="text-muted-foreground">Aucun utilisateur pour le moment</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {recentUsers.map(user => (
+                      <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage src={user.avatar_url} />
+                            <AvatarFallback>
+                              {user.first_name?.charAt(0)}{user.last_name?.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-semibold">{user.first_name} {user.last_name}</p>
+                            <p className="text-sm text-muted-foreground">{user.email}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={user.user_type === 'walker' ? 'default' : 'secondary'}>
+                            {user.user_type === 'walker' ? 'Promeneur' : 'Propriétaire'}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {new Date(user.created_at).toLocaleDateString('fr-FR')}
+                          </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={user.user_type === 'walker' ? 'default' : 'secondary'}>
-                          {user.user_type === 'walker' ? 'Promeneur' : 'Propriétaire'}
-                        </Badge>
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(user.created_at).toLocaleDateString('fr-FR')}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -455,34 +345,21 @@ const AdminDashboard = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Activity className="h-5 w-5" />
-                    Statistiques utilisateurs
+                    Statistiques activité
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <UserCheck className="h-4 w-4 text-primary" />
-                      <span>Promeneurs vérifiés</span>
-                    </div>
-                    <span className="text-xl font-bold">{stats.activeWalkers}</span>
+                    <span>Réservations terminées</span>
+                    <span className="text-xl font-bold text-green-600">{stats.completedBookings}</span>
                   </div>
                   <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-amber-500" />
-                      <span>En attente de vérification</span>
-                    </div>
-                    <span className="text-xl font-bold">{stats.pendingWalkers}</span>
+                    <span>Réservations en attente</span>
+                    <span className="text-xl font-bold text-amber-600">{stats.pendingBookings}</span>
                   </div>
                   <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-primary" />
-                      <span>Taux de complétion</span>
-                    </div>
-                    <span className="text-xl font-bold">
-                      {stats.totalBookings > 0 
-                        ? ((stats.completedBookings / stats.totalBookings) * 100).toFixed(0) 
-                        : 0}%
-                    </span>
+                    <span>Réservations annulées</span>
+                    <span className="text-xl font-bold text-red-600">{stats.cancelledBookings}</span>
                   </div>
                 </CardContent>
               </Card>

@@ -14,11 +14,27 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
+interface Conversation {
+  id: string;
+  otherParticipant: {
+    id: string;
+    first_name: string | null;
+    avatar_url: string | null;
+  } | null;
+  lastMessage: {
+    content: string;
+    created_at: string;
+    read: boolean;
+    sender_id: string;
+  } | null;
+  unreadCount: number;
+}
+
 const Messages = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [conversations, setConversations] = useState<any[]>([]);
-  const [selectedConversation, setSelectedConversation] = useState<any>(null);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
@@ -31,7 +47,7 @@ const Messages = () => {
 
   useEffect(() => {
     if (selectedConversation) {
-      fetchMessages(selectedConversation.id);
+      fetchMessages(selectedConversation.otherParticipant?.id || '');
     }
   }, [selectedConversation]);
 
@@ -47,58 +63,59 @@ const Messages = () => {
 
   const fetchConversations = async (userId: string) => {
     try {
-      const { data: conversationsData, error } = await supabase
-        .from('conversations')
+      // Fetch messages where user is sender or receiver
+      const { data: messagesData, error } = await supabase
+        .from('messages')
         .select('*')
-        .or(`participant1_id.eq.${userId},participant2_id.eq.${userId}`)
-        .order('updated_at', { ascending: false });
+        .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      if (conversationsData && conversationsData.length > 0) {
-        // Get other participants info
-        const otherParticipantIds = conversationsData.map(c => 
-          c.participant1_id === userId ? c.participant2_id : c.participant1_id
-        );
-
-        const { data: participantsData } = await supabase
-          .from('profiles')
-          .select('id, first_name, avatar_url')
-          .in('id', otherParticipantIds);
-
-        const participantMap = new Map(participantsData?.map(p => [p.id, p]) || []);
-
-        // Get last message for each conversation
-        const enrichedConversations = await Promise.all(
-          conversationsData.map(async (conv) => {
-            const otherId = conv.participant1_id === userId ? conv.participant2_id : conv.participant1_id;
-            const { data: lastMessage } = await supabase
-              .from('messages')
-              .select('content, created_at, is_read, sender_id')
-              .eq('conversation_id', conv.id)
-              .order('created_at', { ascending: false })
-              .limit(1)
-              .maybeSingle();
-
-            // Count unread messages
-            const { count: unreadCount } = await supabase
-              .from('messages')
-              .select('*', { count: 'exact', head: true })
-              .eq('conversation_id', conv.id)
-              .eq('is_read', false)
-              .neq('sender_id', userId);
-
-            return {
-              ...conv,
-              otherParticipant: participantMap.get(otherId),
-              lastMessage,
-              unreadCount: unreadCount || 0
-            };
-          })
-        );
-
-        setConversations(enrichedConversations);
+      if (!messagesData || messagesData.length === 0) {
+        setConversations([]);
+        setLoading(false);
+        return;
       }
+
+      // Group messages by conversation (other participant)
+      const conversationMap = new Map<string, any[]>();
+      messagesData.forEach(msg => {
+        const otherId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
+        if (!conversationMap.has(otherId)) {
+          conversationMap.set(otherId, []);
+        }
+        conversationMap.get(otherId)!.push(msg);
+      });
+
+      // Get participant profiles
+      const otherIds = Array.from(conversationMap.keys());
+      const { data: participantsData } = await supabase
+        .from('profiles')
+        .select('id, first_name, avatar_url')
+        .in('id', otherIds);
+
+      const participantMap = new Map(participantsData?.map(p => [p.id, p]) || []);
+
+      // Build conversations array
+      const convs: Conversation[] = Array.from(conversationMap.entries()).map(([otherId, msgs]) => {
+        const lastMessage = msgs[0];
+        const unreadCount = msgs.filter(m => m.receiver_id === userId && !m.read).length;
+        
+        return {
+          id: otherId,
+          otherParticipant: participantMap.get(otherId) || null,
+          lastMessage: lastMessage ? {
+            content: lastMessage.content,
+            created_at: lastMessage.created_at,
+            read: lastMessage.read,
+            sender_id: lastMessage.sender_id
+          } : null,
+          unreadCount
+        };
+      });
+
+      setConversations(convs);
     } catch (error: any) {
       toast({
         title: "Erreur",
@@ -110,25 +127,26 @@ const Messages = () => {
     }
   };
 
-  const fetchMessages = async (conversationId: string) => {
+  const fetchMessages = async (otherUserId: string) => {
+    if (!currentUserId) return;
+    
     try {
       const { data: messagesData, error } = await supabase
         .from('messages')
         .select('*')
-        .eq('conversation_id', conversationId)
+        .or(`and(sender_id.eq.${currentUserId},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${currentUserId})`)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
       setMessages(messagesData || []);
 
       // Mark messages as read
-      if (currentUserId) {
-        await supabase
-          .from('messages')
-          .update({ is_read: true })
-          .eq('conversation_id', conversationId)
-          .neq('sender_id', currentUserId);
-      }
+      await supabase
+        .from('messages')
+        .update({ read: true })
+        .eq('receiver_id', currentUserId)
+        .eq('sender_id', otherUserId);
+        
     } catch (error: any) {
       toast({
         title: "Erreur",
@@ -146,21 +164,15 @@ const Messages = () => {
       const { error } = await supabase
         .from('messages')
         .insert({
-          conversation_id: selectedConversation.id,
           sender_id: currentUserId,
+          receiver_id: selectedConversation.otherParticipant?.id || '',
           content: newMessage.trim()
         });
 
       if (error) throw error;
 
       setNewMessage('');
-      fetchMessages(selectedConversation.id);
-      
-      // Update conversation timestamp
-      await supabase
-        .from('conversations')
-        .update({ updated_at: new Date().toISOString() })
-        .eq('id', selectedConversation.id);
+      fetchMessages(selectedConversation.otherParticipant?.id || '');
 
     } catch (error: any) {
       toast({
@@ -351,7 +363,7 @@ const Messages = () => {
                                 })}
                               </span>
                               {msg.sender_id === currentUserId && (
-                                msg.is_read ? (
+                                msg.read ? (
                                   <CheckCircle className="h-3 w-3" />
                                 ) : (
                                   <Clock className="h-3 w-3" />

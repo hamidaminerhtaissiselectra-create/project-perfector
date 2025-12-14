@@ -66,26 +66,30 @@ const Dashboard = () => {
         .eq('owner_id', userId);
       setDogs(dogsData || []);
 
-      // Fetch bookings with walker info
+      // Fetch bookings with dog info
       const { data: bookingsData } = await supabase
         .from('bookings')
         .select('*, dogs(name, breed, photo_url)')
         .eq('owner_id', userId)
-        .order('booking_date', { ascending: false });
+        .order('scheduled_date', { ascending: false });
 
       if (bookingsData && bookingsData.length > 0) {
-        const walkerIds = [...new Set(bookingsData.map(b => b.walker_id))];
-        const { data: walkersData } = await supabase
-          .from('profiles')
-          .select('id, first_name, avatar_url, city')
-          .in('id', walkerIds);
+        const walkerIds = [...new Set(bookingsData.map(b => b.walker_id).filter(Boolean))];
+        if (walkerIds.length > 0) {
+          const { data: walkersData } = await supabase
+            .from('profiles')
+            .select('id, first_name, avatar_url, city')
+            .in('id', walkerIds);
 
-        const walkerMap = new Map(walkersData?.map(w => [w.id, w]) || []);
-        const enrichedBookings = bookingsData.map(b => ({
-          ...b,
-          walker: walkerMap.get(b.walker_id)
-        }));
-        setBookings(enrichedBookings);
+          const walkerMap = new Map(walkersData?.map(w => [w.id, w]) || []);
+          const enrichedBookings = bookingsData.map(b => ({
+            ...b,
+            walker: walkerMap.get(b.walker_id)
+          }));
+          setBookings(enrichedBookings);
+        } else {
+          setBookings(bookingsData);
+        }
       }
 
       // Fetch favorites
@@ -107,14 +111,11 @@ const Dashboard = () => {
       // Calculate stats
       const now = new Date();
       const upcoming = bookingsData?.filter(
-        b => new Date(b.booking_date) >= now && b.status !== 'cancelled'
+        b => new Date(b.scheduled_date) >= now && b.status !== 'cancelled'
       ) || [];
       const completed = bookingsData?.filter(b => b.status === 'completed') || [];
-      const totalSpent = completed.reduce((sum, b) => sum + Number(b.total_price), 0);
-      const pendingProofs = bookingsData?.filter(b => 
-        b.status === 'completed' && !b.proof_validated
-      ) || [];
-      const unreadNotifs = notificationsData?.filter(n => !n.is_read) || [];
+      const totalSpent = completed.reduce((sum, b) => sum + Number(b.price || 0), 0);
+      const unreadNotifs = notificationsData?.filter(n => !n.read) || [];
 
       setStats({
         totalBookings: bookingsData?.length || 0,
@@ -122,7 +123,7 @@ const Dashboard = () => {
         completedBookings: completed.length,
         totalDogs: dogsData?.length || 0,
         totalSpent,
-        pendingProofs: pendingProofs.length,
+        pendingProofs: 0,
         totalFavorites: favoritesData?.length || 0,
         unreadNotifications: unreadNotifs.length
       });
@@ -133,7 +134,7 @@ const Dashboard = () => {
     }
   };
 
-  const getStatusBadge = (status: string, proofSubmitted?: boolean) => {
+  const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; variant: any; icon?: any }> = {
       pending: { label: 'En attente', variant: 'secondary', icon: Clock },
       confirmed: { label: 'Confirmée', variant: 'default', icon: CheckCircle },
@@ -152,12 +153,9 @@ const Dashboard = () => {
   const getServiceLabel = (serviceType: string) => {
     const services: Record<string, string> = {
       promenade: "Promenade",
-      visite_domicile: "Visite à domicile",
-      hebergement_nuit: "Hébergement nuit",
-      hebergement_jour: "Hébergement jour",
-      garde_domicile: "Garde à domicile",
-      visite_sanitaire: "Visite sanitaire",
-      accompagnement_veterinaire: "Accompagnement vétérinaire"
+      visite: "Visite à domicile",
+      garde: "Garde",
+      veterinaire: "Accompagnement vétérinaire"
     };
     return services[serviceType] || serviceType;
   };
@@ -165,7 +163,7 @@ const Dashboard = () => {
   const markNotificationRead = async (notificationId: string) => {
     await supabase
       .from('notifications')
-      .update({ is_read: true })
+      .update({ read: true })
       .eq('id', notificationId);
   };
 
@@ -184,7 +182,7 @@ const Dashboard = () => {
   }
 
   const upcomingBookings = bookings.filter(
-    b => new Date(b.booking_date) >= new Date() && b.status !== 'cancelled'
+    b => new Date(b.scheduled_date) >= new Date() && b.status !== 'cancelled'
   ).slice(0, 5);
 
   const recentBookings = bookings.slice(0, 3);
@@ -362,18 +360,18 @@ const Dashboard = () => {
                           <div className="flex items-center gap-3 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
-                              {new Date(booking.booking_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                              {new Date(booking.scheduled_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              {booking.start_time}
+                              {booking.scheduled_time}
                             </span>
-                            <span>avec {booking.walker?.first_name}</span>
+                            <span>avec {booking.walker?.first_name || 'promeneur'}</span>
                           </div>
                         </div>
                         <div className="text-right">
                           {getStatusBadge(booking.status)}
-                          <p className="font-bold mt-1">{Number(booking.total_price).toFixed(2)}€</p>
+                          <p className="font-bold mt-1">{Number(booking.price || 0).toFixed(2)}€</p>
                         </div>
                       </div>
                     ))}
@@ -407,19 +405,18 @@ const Dashboard = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {dogs.map(dog => (
-                      <div key={dog.id} className="flex items-center gap-4 p-4 border rounded-xl hover:bg-muted/50 transition-colors">
-                        <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                          {dog.photo_url ? (
-                            <img src={dog.photo_url} alt={dog.name} className="h-14 w-14 rounded-full object-cover" />
-                          ) : (
-                            <DogIcon className="h-7 w-7 text-primary" />
-                          )}
-                        </div>
-                        <div className="flex-1">
+                      <div key={dog.id} className="flex items-center gap-4 p-4 border rounded-xl">
+                        {dog.photo_url ? (
+                          <img src={dog.photo_url} alt={dog.name} className="w-16 h-16 rounded-full object-cover" />
+                        ) : (
+                          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-2xl">
+                            🐕
+                          </div>
+                        )}
+                        <div>
                           <p className="font-semibold">{dog.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {dog.breed} {dog.age && `• ${dog.age} ans`} {dog.weight && `• ${dog.weight}kg`}
-                          </p>
+                          <p className="text-sm text-muted-foreground">{dog.breed}</p>
+                          <p className="text-xs text-muted-foreground">{dog.age} an(s) • {dog.weight}kg</p>
                         </div>
                       </div>
                     ))}
@@ -433,33 +430,29 @@ const Dashboard = () => {
           <div className="space-y-6">
             {/* Notifications */}
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Bell className="h-4 w-4" />
-                  Notifications
-                  {stats.unreadNotifications > 0 && (
-                    <Badge variant="destructive" className="text-xs px-1.5">
-                      {stats.unreadNotifications}
-                    </Badge>
-                  )}
-                </CardTitle>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-lg">Notifications</CardTitle>
+                {stats.unreadNotifications > 0 && (
+                  <Badge variant="destructive">{stats.unreadNotifications}</Badge>
+                )}
               </CardHeader>
               <CardContent>
                 {notifications.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">Aucune notification</p>
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    Aucune notification
+                  </p>
                 ) : (
                   <div className="space-y-3">
-                    {notifications.slice(0, 4).map(notif => (
+                    {notifications.slice(0, 3).map(notif => (
                       <div 
                         key={notif.id} 
-                        className={`p-3 rounded-lg border ${!notif.is_read ? 'bg-primary/5 border-primary/20' : ''}`}
+                        className={`p-3 rounded-lg text-sm cursor-pointer transition-colors ${
+                          !notif.read ? 'bg-primary/5 hover:bg-primary/10' : 'hover:bg-muted'
+                        }`}
                         onClick={() => markNotificationRead(notif.id)}
                       >
-                        <p className="text-sm font-medium">{notif.title}</p>
-                        <p className="text-xs text-muted-foreground">{notif.message}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {new Date(notif.created_at).toLocaleDateString('fr-FR')}
-                        </p>
+                        <p className="font-medium">{notif.title}</p>
+                        <p className="text-muted-foreground text-xs mt-1">{notif.message}</p>
                       </div>
                     ))}
                   </div>
@@ -467,35 +460,55 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Security Info */}
-            <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Shield className="h-5 w-5 text-primary" />
+            {/* Favorites */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Promeneurs favoris</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {favorites.length === 0 ? (
+                  <div className="text-center py-4">
+                    <Heart className="h-8 w-8 mx-auto mb-2 text-muted-foreground opacity-30" />
+                    <p className="text-sm text-muted-foreground">
+                      Aucun favori pour le moment
+                    </p>
+                    <Button variant="link" size="sm" onClick={() => navigate('/walkers')}>
+                      Découvrir les promeneurs
+                    </Button>
                   </div>
-                  <div>
-                    <p className="font-semibold">Paiement sécurisé</p>
-                    <p className="text-xs text-muted-foreground">Système escrow</p>
+                ) : (
+                  <div className="space-y-3">
+                    {favorites.slice(0, 3).map(fav => (
+                      <div key={fav.id} className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarFallback className="bg-primary/10 text-primary">
+                            {fav.walker_profiles?.first_name?.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="font-medium text-sm">{fav.walker_profiles?.first_name}</p>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
+                            {fav.walker_profiles?.rating || '0'}
+                          </div>
+                        </div>
+                        <Button size="sm" variant="outline" onClick={() => navigate(`/book/${fav.walker_id}`)}>
+                          Réserver
+                        </Button>
+                      </div>
+                    ))}
                   </div>
-                </div>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Votre paiement est bloqué jusqu'à la validation de la preuve photo/vidéo. 
-                  100% sécurisé.
-                </p>
-                <Button variant="link" className="p-0 h-auto text-primary" onClick={() => navigate('/securite')}>
-                  En savoir plus →
-                </Button>
+                )}
               </CardContent>
             </Card>
 
             {/* Referral CTA */}
-            <Card className="bg-gradient-to-br from-accent/10 to-primary/10 border-accent/20">
-              <CardContent className="pt-6 text-center">
-                <Gift className="h-10 w-10 text-accent mx-auto mb-3" />
-                <h3 className="font-semibold mb-2">Parrainez vos amis !</h3>
+            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+              <CardContent className="p-6 text-center">
+                <Gift className="h-10 w-10 mx-auto mb-3 text-primary" />
+                <h3 className="font-bold mb-2">Parrainez vos amis</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Gagnez 15€ pour chaque ami parrainé
+                  Gagnez 10€ pour chaque ami qui s'inscrit
                 </p>
                 <Button onClick={() => navigate('/referral')} className="w-full">
                   Inviter des amis

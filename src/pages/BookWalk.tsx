@@ -26,12 +26,9 @@ interface ServiceOption {
 
 const serviceOptions: ServiceOption[] = [
   { id: 'promenade', label: 'Promenade', description: 'Balade en extérieur', minPrice: 8 },
-  { id: 'visite_domicile', label: 'Visite à domicile', description: 'Passage chez vous', minPrice: 8 },
-  { id: 'hebergement_nuit', label: 'Hébergement nuit', description: 'Nuit chez le promeneur', minPrice: 10 },
-  { id: 'hebergement_jour', label: 'Garderie de jour', description: 'Journée chez le promeneur', minPrice: 10 },
-  { id: 'garde_domicile', label: 'Garde à domicile', description: 'Nuit chez vous', minPrice: 12 },
-  { id: 'visite_sanitaire', label: 'Visite sanitaire', description: 'Soins et hygiène', minPrice: 16 },
-  { id: 'accompagnement_veterinaire', label: 'Accompagnement vétérinaire', description: 'Transport et RDV véto', minPrice: 13 },
+  { id: 'visite', label: 'Visite à domicile', description: 'Passage chez vous', minPrice: 8 },
+  { id: 'garde', label: 'Garde', description: 'Garde de votre chien', minPrice: 10 },
+  { id: 'veterinaire', label: 'Accompagnement vétérinaire', description: 'Transport et RDV véto', minPrice: 13 },
 ];
 
 const BookWalk = () => {
@@ -77,17 +74,45 @@ const BookWalk = () => {
   };
 
   const fetchWalker = async () => {
-    const { data, error } = await supabase
-      .from('walker_public_info')
+    // Fetch walker profile with user info
+    const { data: walkerData, error: walkerError } = await supabase
+      .from('walker_profiles')
       .select('*')
-      .eq('id', walkerId)
+      .eq('user_id', walkerId)
       .single();
 
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    } else {
-      setWalker(data);
+    if (walkerError) {
+      // Try with id instead
+      const { data: walkerById, error: walkerByIdError } = await supabase
+        .from('walker_profiles')
+        .select('*')
+        .eq('id', walkerId)
+        .single();
+      
+      if (walkerByIdError) {
+        toast({ title: "Erreur", description: "Promeneur introuvable", variant: "destructive" });
+        return;
+      }
+      
+      // Get profile info
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('first_name, avatar_url, city')
+        .eq('id', walkerById.user_id)
+        .single();
+      
+      setWalker({ ...walkerById, ...profileData });
+      return;
     }
+
+    // Get profile info
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('first_name, avatar_url, city')
+      .eq('id', walkerData.user_id)
+      .single();
+
+    setWalker({ ...walkerData, ...profileData });
   };
 
   const calculatePrice = () => {
@@ -132,11 +157,11 @@ const BookWalk = () => {
         owner_id: userId,
         walker_id: walkerId,
         dog_id: selectedDog,
-        booking_date: formData.get('date') as string,
-        start_time: formData.get('time') as string,
+        scheduled_date: formData.get('date') as string,
+        scheduled_time: formData.get('time') as string,
         duration_minutes: parseInt(duration),
-        total_price: calculatePrice(),
-        special_notes: formData.get('notes') as string || null,
+        price: calculatePrice(),
+        notes: formData.get('notes') as string || null,
         service_type: selectedService,
       });
 
@@ -389,7 +414,7 @@ const BookWalk = () => {
                     )}
                   </div>
 
-                  {walker.is_verified && (
+                  {walker.verified && (
                     <Badge className="mt-3" variant="secondary">
                       <CheckCircle className="h-3 w-3 mr-1" />
                       Vérifié
