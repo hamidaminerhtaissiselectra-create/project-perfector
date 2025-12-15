@@ -74,19 +74,19 @@ export default function AllZones() {
           {/* Zones Lists */}
           <section className="py-12">
             <div className="container mx-auto px-4">
-              {/* Paris & 94 */}
+              {/* Paris & Île-de-France */}
               {priority1.length > 0 && (
                 <div className="mb-12">
                   <h2 className="text-2xl font-bold mb-2 flex items-center gap-3">
                     <span className="w-3 h-3 bg-primary rounded-full"></span>
-                    Paris & Val-de-Marne
+                    Paris & Île-de-France
                   </h2>
-                  <p className="text-muted-foreground mb-6">Zone prioritaire - Couverture maximale</p>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  <p className="text-muted-foreground mb-6">Zone prioritaire - Couverture maximale avec tous les arrondissements</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                     {priority1.map((zone) => (
                       <Link key={zone.id} to={`/zone/${zone.slug}`}>
                         <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
-                          <div className="relative h-32 md:h-36 overflow-hidden">
+                          <div className="relative h-28 md:h-32 overflow-hidden">
                             <img
                               src={zone.image}
                               alt={zone.altText}
@@ -94,9 +94,9 @@ export default function AllZones() {
                               loading="lazy"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                            <div className="absolute bottom-3 left-3 right-3">
-                              <p className="text-white font-semibold">{zone.name}</p>
-                              <p className="text-white/70 text-xs mt-0.5 capitalize">{zone.type}</p>
+                            <div className="absolute bottom-2 left-2 right-2">
+                              <p className="text-white font-semibold text-sm">{zone.name}</p>
+                              <p className="text-white/70 text-xs capitalize">{zone.type}</p>
                             </div>
                           </div>
                         </Card>
@@ -137,15 +137,15 @@ export default function AllZones() {
                 </div>
               )}
 
-              {/* Quartiers clés */}
+              {/* Villes moyennes et quartiers clés */}
               {priority3.length > 0 && (
                 <div className="mb-12">
                   <h2 className="text-2xl font-bold mb-2 flex items-center gap-3">
                     <span className="w-3 h-3 bg-accent rounded-full"></span>
-                    Quartiers parisiens
+                    Villes moyennes & Quartiers parisiens
                   </h2>
-                  <p className="text-muted-foreground mb-6">Les quartiers les plus demandés</p>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  <p className="text-muted-foreground mb-6">Couverture étendue dans toute la France</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                     {priority3.map((zone) => (
                       <Link key={zone.id} to={`/zone/${zone.slug}`}>
                         <Card className="group overflow-hidden hover:shadow-md transition-all duration-300 h-full">
@@ -158,7 +158,7 @@ export default function AllZones() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                             <div className="absolute bottom-2 left-2 right-2">
-                              <p className="text-white font-medium text-sm">{zone.name}</p>
+                              <p className="text-white font-medium text-sm truncate">{zone.name}</p>
                             </div>
                           </div>
                         </Card>
@@ -168,20 +168,20 @@ export default function AllZones() {
                 </div>
               )}
 
-              {/* Autres villes */}
+              {/* Autres villes et DOM-TOM */}
               {priority4.length > 0 && (
                 <div className="mb-8">
                   <h2 className="text-2xl font-bold mb-2 flex items-center gap-3">
                     <span className="w-3 h-3 bg-muted-foreground rounded-full"></span>
-                    Autres villes
+                    Préfectures, villes secondaires & DOM-TOM
                   </h2>
-                  <p className="text-muted-foreground mb-6">Nous nous développons dans ces zones</p>
-                  <div className="flex flex-wrap gap-3">
+                  <p className="text-muted-foreground mb-6">Couverture nationale complète - {priority4.length} villes</p>
+                  <div className="flex flex-wrap gap-2">
                     {priority4.map((zone) => (
                       <Link 
                         key={zone.id} 
                         to={`/zone/${zone.slug}`}
-                        className="px-4 py-2 bg-muted rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium"
+                        className="px-3 py-1.5 bg-muted rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium"
                       >
                         {zone.name}
                       </Link>
