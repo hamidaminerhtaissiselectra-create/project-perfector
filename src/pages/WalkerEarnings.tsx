@@ -57,7 +57,7 @@ const WalkerEarnings = () => {
         .from('bookings')
         .select('*')
         .eq('walker_id', walkerId)
-        .order('booking_date', { ascending: false });
+        .order('scheduled_date', { ascending: false });
 
       if (bookingsData) {
         const now = new Date();
@@ -66,32 +66,32 @@ const WalkerEarnings = () => {
 
         const completed = bookingsData.filter(b => b.status === 'completed');
         const thisMonthCompleted = completed.filter(
-          b => new Date(b.booking_date) >= startOfThisMonth
+          b => new Date(b.scheduled_date) >= startOfThisMonth
         );
         const lastMonthCompleted = completed.filter(
-          b => new Date(b.booking_date) >= startOfLastMonth && 
-               new Date(b.booking_date) < startOfThisMonth
+          b => new Date(b.scheduled_date) >= startOfLastMonth && 
+               new Date(b.scheduled_date) < startOfThisMonth
         );
 
         const commission = 0.13;
         const thisMonth = thisMonthCompleted.reduce((sum, b) => 
-          sum + Number(b.total_price) * (1 - commission), 0
+          sum + Number(b.price || 0) * (1 - commission), 0
         );
         const lastMonth = lastMonthCompleted.reduce((sum, b) => 
-          sum + Number(b.total_price) * (1 - commission), 0
+          sum + Number(b.price || 0) * (1 - commission), 0
         );
         const total = completed.reduce((sum, b) => 
-          sum + Number(b.total_price) * (1 - commission), 0
+          sum + Number(b.price || 0) * (1 - commission), 0
         );
 
-        // Pending = confirmed but not paid yet
+        // Pending = confirmed but not completed yet
         const pendingPayments = bookingsData.filter(
-          b => b.status === 'confirmed' && !b.payment_released
-        ).reduce((sum, b) => sum + Number(b.total_price) * (1 - commission), 0);
+          b => b.status === 'confirmed'
+        ).reduce((sum, b) => sum + Number(b.price || 0) * (1 - commission), 0);
 
-        // Available = completed and payment released
-        const availableBalance = completed.filter(b => b.payment_released)
-          .reduce((sum, b) => sum + Number(b.total_price) * (1 - commission), 0);
+        // Available = completed (owner_confirmed acts as payment release)
+        const availableBalance = completed.filter(b => b.owner_confirmed)
+          .reduce((sum, b) => sum + Number(b.price || 0) * (1 - commission), 0);
 
         setEarnings({
           thisMonth,
@@ -104,11 +104,11 @@ const WalkerEarnings = () => {
         // Create transaction history
         const transactionList = completed.map(b => ({
           id: b.id,
-          date: b.booking_date,
-          amount: Number(b.total_price) * (1 - commission),
-          gross: Number(b.total_price),
-          commission: Number(b.total_price) * commission,
-          status: b.payment_released ? 'released' : 'pending',
+          date: b.scheduled_date,
+          amount: Number(b.price || 0) * (1 - commission),
+          gross: Number(b.price || 0),
+          commission: Number(b.price || 0) * commission,
+          status: b.owner_confirmed ? 'released' : 'pending',
           type: 'earning'
         }));
         setTransactions(transactionList);
@@ -121,12 +121,12 @@ const WalkerEarnings = () => {
           const monthName = monthStart.toLocaleDateString('fr-FR', { month: 'short' });
           
           const monthEarnings = completed.filter(b => {
-            const date = new Date(b.booking_date);
+            const date = new Date(b.scheduled_date);
             return date >= monthStart && date <= monthEnd;
-          }).reduce((sum, b) => sum + Number(b.total_price) * (1 - commission), 0);
+          }).reduce((sum, b) => sum + Number(b.price || 0) * (1 - commission), 0);
 
           const monthMissions = completed.filter(b => {
-            const date = new Date(b.booking_date);
+            const date = new Date(b.scheduled_date);
             return date >= monthStart && date <= monthEnd;
           }).length;
 

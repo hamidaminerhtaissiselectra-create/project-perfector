@@ -74,30 +74,20 @@ const WalkerDashboard = () => {
       const { data: walkerData } = await supabase
         .from('walker_profiles')
         .select('*')
-        .eq('id', walkerId)
-        .single();
+        .eq('user_id', walkerId)
+        .maybeSingle();
       setWalkerProfile(walkerData);
 
-      // Fetch documents
-      const { data: docsData } = await supabase
-        .from('walker_documents')
-        .select('*')
-        .eq('walker_id', walkerId);
-      setDocuments(docsData || []);
-
-      // Fetch badges
-      const { data: badgesData } = await supabase
-        .from('walker_badges')
-        .select('*')
-        .eq('walker_id', walkerId);
-      setBadges(badgesData || []);
+      // Documents and badges not yet implemented - using empty arrays
+      setDocuments([]);
+      setBadges([]);
 
       // Fetch bookings
       const { data: bookingsData } = await supabase
         .from('bookings')
         .select('*, dogs(name, breed, photo_url)')
         .eq('walker_id', walkerId)
-        .order('booking_date', { ascending: true });
+        .order('scheduled_date', { ascending: true });
 
       if (bookingsData) {
         // Get owner info
@@ -117,7 +107,7 @@ const WalkerDashboard = () => {
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
         const upcoming = enrichedBookings.filter(
-          b => new Date(b.booking_date) >= now && b.status === 'confirmed'
+          b => new Date(b.scheduled_date) >= now && b.status === 'confirmed'
         );
         const pending = enrichedBookings.filter(b => b.status === 'pending');
         const completedThisMonth = enrichedBookings.filter(
@@ -126,10 +116,10 @@ const WalkerDashboard = () => {
         const allCompleted = enrichedBookings.filter(b => b.status === 'completed');
 
         const monthlyEarnings = completedThisMonth.reduce((sum, b) => 
-          sum + Number(b.total_price) * 0.87, 0
+          sum + Number(b.price || 0) * 0.87, 0
         );
         const pendingEarnings = pending.reduce((sum, b) => 
-          sum + Number(b.total_price) * 0.87, 0
+          sum + Number(b.price || 0) * 0.87, 0
         );
 
         setStats({
@@ -388,15 +378,15 @@ const WalkerDashboard = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span>{new Date(booking.booking_date).toLocaleDateString('fr-FR')}</span>
+                          <span>{new Date(booking.scheduled_date).toLocaleDateString('fr-FR')}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="h-4 w-4 text-muted-foreground" />
-                          <span>{booking.start_time} - {booking.duration_minutes}min</span>
+                          <span>{booking.scheduled_time} - {booking.duration_minutes}min</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Euro className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-semibold">{Number(booking.total_price).toFixed(2)}€</span>
+                          <span className="font-semibold">{Number(booking.price || 0).toFixed(2)}€</span>
                         </div>
                       </div>
 
