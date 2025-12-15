@@ -78,9 +78,19 @@ const WalkerDashboard = () => {
         .maybeSingle();
       setWalkerProfile(walkerData);
 
-      // Documents and badges not yet implemented - using empty arrays
-      setDocuments([]);
-      setBadges([]);
+      // Fetch documents
+      const { data: docsData } = await supabase
+        .from('walker_documents')
+        .select('*')
+        .eq('walker_id', walkerId);
+      setDocuments(docsData || []);
+
+      // Fetch badges
+      const { data: badgesData } = await supabase
+        .from('walker_badges')
+        .select('*')
+        .eq('walker_id', walkerId);
+      setBadges(badgesData || []);
 
       // Fetch bookings
       const { data: bookingsData } = await supabase
