@@ -374,6 +374,78 @@ export type Database = {
         }
         Relationships: []
       }
+      walker_badges: {
+        Row: {
+          badge_description: string | null
+          badge_name: string
+          badge_type: string
+          created_at: string | null
+          earned_at: string | null
+          id: string
+          walker_id: string
+        }
+        Insert: {
+          badge_description?: string | null
+          badge_name: string
+          badge_type: string
+          created_at?: string | null
+          earned_at?: string | null
+          id?: string
+          walker_id: string
+        }
+        Update: {
+          badge_description?: string | null
+          badge_name?: string
+          badge_type?: string
+          created_at?: string | null
+          earned_at?: string | null
+          id?: string
+          walker_id?: string
+        }
+        Relationships: []
+      }
+      walker_documents: {
+        Row: {
+          created_at: string | null
+          document_type: string
+          file_url: string | null
+          id: string
+          rejection_reason: string | null
+          submitted_at: string | null
+          updated_at: string | null
+          verification_status: string | null
+          verified_at: string | null
+          verified_by: string | null
+          walker_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          document_type: string
+          file_url?: string | null
+          id?: string
+          rejection_reason?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          verification_status?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+          walker_id: string
+        }
+        Update: {
+          created_at?: string | null
+          document_type?: string
+          file_url?: string | null
+          id?: string
+          rejection_reason?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          verification_status?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+          walker_id?: string
+        }
+        Relationships: []
+      }
       walker_earnings: {
         Row: {
           amount: number
