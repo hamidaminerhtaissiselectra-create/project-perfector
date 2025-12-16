@@ -43,7 +43,7 @@ const AddDog = () => {
         age: formData.get('age') ? parseInt(formData.get('age') as string) : null,
         weight: formData.get('weight') ? parseFloat(formData.get('weight') as string) : null,
         temperament: formData.get('temperament') as string || null,
-        health_notes: formData.get('medical') as string || null,
+        special_needs: formData.get('medical') as string || null,
       });
 
       if (error) throw error;
