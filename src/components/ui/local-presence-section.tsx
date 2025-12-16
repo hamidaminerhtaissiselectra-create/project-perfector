@@ -1,16 +1,48 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, ChevronRight } from 'lucide-react';
+import { MapPin, ChevronRight, ChevronDown } from 'lucide-react';
 import { zones } from '@/data/localSeoData';
-import { Card, CardContent } from './card';
+import { Card } from './card';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+// City images mapping - using placeholder URLs that will be replaced with actual city images
+const cityImages: Record<string, string> = {
+  'paris': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&h=300&fit=crop',
+  'creteil': 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400&h=300&fit=crop',
+  'vitry-sur-seine': 'https://images.unsplash.com/photo-1431274172761-fca41d930114?w=400&h=300&fit=crop',
+  'champigny-sur-marne': 'https://images.unsplash.com/photo-1478391679764-b2d8b3cd1e94?w=400&h=300&fit=crop',
+  'saint-maur-des-fosses': 'https://images.unsplash.com/photo-1550340499-a6c60fc8287c?w=400&h=300&fit=crop',
+  'lyon': 'https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=400&h=300&fit=crop',
+  'marseille': 'https://images.unsplash.com/photo-1589810264340-0ce27bfbf751?w=400&h=300&fit=crop',
+  'bordeaux': 'https://images.unsplash.com/photo-1565618754154-c8011e5df2a6?w=400&h=300&fit=crop',
+  'toulouse': 'https://images.unsplash.com/photo-1550340499-a6c60fc8287c?w=400&h=300&fit=crop',
+  'nantes': 'https://images.unsplash.com/photo-1565618754154-c8011e5df2a6?w=400&h=300&fit=crop',
+  'nice': 'https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?w=400&h=300&fit=crop',
+  'lille': 'https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=400&h=300&fit=crop',
+  'strasbourg': 'https://images.unsplash.com/photo-1541343672885-9be56236c4fb?w=400&h=300&fit=crop',
+  'rennes': 'https://images.unsplash.com/photo-1595435193556-fdc5e8631b5b?w=400&h=300&fit=crop',
+  'montpellier': 'https://images.unsplash.com/photo-1504512485720-7d83a16ee930?w=400&h=300&fit=crop',
+};
+
+const getCityImage = (slug: string) => {
+  return cityImages[slug] || 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=400&h=300&fit=crop';
+};
 
 export function LocalPresenceSection() {
-  // Afficher les zones prioritaires (1 et 2)
-  const priorityZones = zones.filter(z => z.priority <= 2 && z.type === 'city');
+  const priorityOneZones = zones.filter(z => z.priority === 1 && z.type === 'city');
+  const priorityTwoZones = zones.filter(z => z.priority === 2);
   const parisArrondissements = zones.filter(z => z.type === 'arrondissement' && z.parent === 'paris');
+  const quartiersPopulaires = zones.filter(z => z.type === 'quartier');
 
   return (
     <section className="py-12 md:py-16 bg-muted/30">
       <div className="container mx-auto px-4">
+        {/* Header */}
         <div className="text-center mb-8 md:mb-10">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
             <MapPin className="w-4 h-4" />
@@ -25,26 +57,26 @@ export function LocalPresenceSection() {
           </p>
         </div>
 
-        {/* Paris et 94 - Priorité 1 */}
-        <div className="mb-8">
+        {/* Paris & Val-de-Marne - Always visible */}
+        <div className="mb-6">
           <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
             <span className="w-2 h-2 bg-primary rounded-full"></span>
             Paris & Val-de-Marne
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
-            {zones.filter(z => z.priority === 1 && z.type === 'city').map((zone) => (
+            {priorityOneZones.map((zone) => (
               <Link key={zone.id} to={`/zone/${zone.slug}`}>
-                <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
+                <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full border-0">
                   <div className="relative h-24 md:h-28 overflow-hidden">
                     <img
-                      src={zone.image}
-                      alt={zone.altText}
+                      src={getCityImage(zone.slug)}
+                      alt={`Dog walker à ${zone.name}`}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     <div className="absolute bottom-2 left-2 right-2">
-                      <p className="text-white font-semibold text-sm md:text-base truncate">{zone.name}</p>
+                      <p className="text-white font-semibold text-sm md:text-base truncate drop-shadow-lg">{zone.name}</p>
                     </div>
                   </div>
                 </Card>
@@ -72,62 +104,78 @@ export function LocalPresenceSection() {
           </div>
         </div>
 
-        {/* Grandes villes - Priorité 2 */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 bg-secondary rounded-full"></span>
-            Grandes villes françaises
-          </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            {zones.filter(z => z.priority === 2).map((zone) => (
-              <Link key={zone.id} to={`/zone/${zone.slug}`}>
-                <Card className="group overflow-hidden hover:shadow-md transition-all duration-300 h-full">
-                  <div className="relative h-20 md:h-24 overflow-hidden">
-                    <img
-                      src={zone.image}
-                      alt={zone.altText}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-2 left-2 right-2">
-                      <p className="text-white font-medium text-sm truncate">{zone.name}</p>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </div>
+        {/* Accordions for space efficiency */}
+        <Accordion type="multiple" className="space-y-4">
+          {/* Grandes villes françaises */}
+          <AccordionItem value="grandes-villes" className="border rounded-xl overflow-hidden bg-background">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50">
+              <div className="flex items-center gap-2 text-left">
+                <span className="w-2 h-2 bg-secondary rounded-full"></span>
+                <span className="text-lg font-semibold">Grandes villes françaises</span>
+                <span className="text-sm text-muted-foreground ml-2">({priorityTwoZones.length} villes)</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 pt-2">
+                {priorityTwoZones.map((zone) => (
+                  <Link key={zone.id} to={`/zone/${zone.slug}`}>
+                    <Card className="group overflow-hidden hover:shadow-md transition-all duration-300 h-full border-0">
+                      <div className="relative h-20 md:h-24 overflow-hidden">
+                        <img
+                          src={getCityImage(zone.slug)}
+                          alt={`Dog walker à ${zone.name}`}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                        <div className="absolute bottom-2 left-2 right-2">
+                          <p className="text-white font-medium text-sm truncate drop-shadow-lg">{zone.name}</p>
+                        </div>
+                      </div>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
 
-        {/* Quartiers clés */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-            <span className="w-2 h-2 bg-accent rounded-full"></span>
-            Quartiers populaires
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {zones.filter(z => z.type === 'quartier').map((zone) => (
-              <Link 
-                key={zone.id} 
-                to={`/zone/${zone.slug}`}
-                className="text-xs md:text-sm text-muted-foreground hover:text-primary transition-colors bg-background px-3 py-1.5 rounded-full border border-border hover:border-primary"
-              >
-                {zone.name}
-              </Link>
-            ))}
-          </div>
-        </div>
+          {/* Quartiers populaires */}
+          <AccordionItem value="quartiers" className="border rounded-xl overflow-hidden bg-background">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50">
+              <div className="flex items-center gap-2 text-left">
+                <span className="w-2 h-2 bg-accent rounded-full"></span>
+                <span className="text-lg font-semibold">Quartiers populaires</span>
+                <span className="text-sm text-muted-foreground ml-2">({quartiersPopulaires.length} quartiers)</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4">
+              <div className="flex flex-wrap gap-2 pt-2">
+                {quartiersPopulaires.map((zone) => (
+                  <Link 
+                    key={zone.id} 
+                    to={`/zone/${zone.slug}`}
+                    className="text-xs md:text-sm text-muted-foreground hover:text-primary transition-colors bg-muted/50 px-3 py-1.5 rounded-full border border-border hover:border-primary hover:bg-background"
+                  >
+                    {zone.name}
+                  </Link>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         {/* CTA */}
-        <div className="text-center pt-4 border-t border-border">
+        <div className="text-center pt-6 mt-6 border-t border-border">
           <Link 
             to="/zones" 
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors"
           >
             Voir toutes nos zones d'intervention
             <ChevronRight className="w-4 h-4" />
           </Link>
+          <p className="text-sm text-muted-foreground mt-3">
+            + de 200 villes couvertes dans toute la France
+          </p>
         </div>
       </div>
     </section>
