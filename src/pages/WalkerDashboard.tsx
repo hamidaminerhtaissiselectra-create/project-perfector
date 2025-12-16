@@ -6,12 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Euro, Calendar, Star, TrendingUp, Clock, Dog as DogIcon,
   Camera, Upload, CheckCircle, AlertCircle, XCircle, 
   MessageCircle, ChevronRight, MapPin, Shield, Award,
-  FileText, Eye
+  FileText, Sparkles, ArrowRight, Bell, Phone, Wallet
 } from 'lucide-react';
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -177,15 +176,14 @@ const WalkerDashboard = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const statusMap: Record<string, { label: string; variant: any }> = {
-      pending: { label: 'En attente', variant: 'secondary' },
-      confirmed: { label: 'Confirmée', variant: 'default' },
-      completed: { label: 'Terminée', variant: 'outline' },
-      cancelled: { label: 'Annulée', variant: 'destructive' },
+  const getServiceLabel = (serviceType: string) => {
+    const services: Record<string, string> = {
+      promenade: "Promenade",
+      visite: "Visite",
+      garde: "Garde",
+      veterinaire: "Vétérinaire"
     };
-    const { label, variant } = statusMap[status] || statusMap.pending;
-    return <Badge variant={variant}>{label}</Badge>;
+    return services[serviceType] || serviceType;
   };
 
   const getDocumentStatus = (docType: string) => {
@@ -196,33 +194,6 @@ const WalkerDashboard = () => {
     return { status: 'pending', label: 'En attente', variant: 'secondary' };
   };
 
-  const getServiceLabel = (serviceType: string) => {
-    const services: Record<string, string> = {
-      promenade: "Promenade",
-      visite_domicile: "Visite",
-      hebergement_nuit: "Hébergement nuit",
-      hebergement_jour: "Hébergement jour",
-      garde_domicile: "Garde",
-      visite_sanitaire: "Visite sanitaire",
-      accompagnement_veterinaire: "Vétérinaire"
-    };
-    return services[serviceType] || serviceType;
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto px-4 py-24">
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
   const verificationProgress = () => {
     const requiredDocs = ['id_card', 'criminal_record', 'insurance'];
     const approvedDocs = documents.filter(d => 
@@ -231,114 +202,159 @@ const WalkerDashboard = () => {
     return Math.round((approvedDocs.length / requiredDocs.length) * 100);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-24">
+          <div className="flex flex-col items-center justify-center h-64 gap-4">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+            <p className="text-muted-foreground">Chargement de votre espace...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <Header />
       <main className="container mx-auto px-4 py-24">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-          <div className="flex items-center gap-4 mb-4 md:mb-0">
-            <Avatar className="h-16 w-16">
-              <AvatarImage src={profile?.avatar_url} />
-              <AvatarFallback className="bg-primary/10 text-primary text-xl">
-                {profile?.first_name?.charAt(0)}{profile?.last_name?.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-3xl md:text-4xl font-bold">{profile?.first_name}</h1>
-                {walkerProfile?.is_verified && (
-                  <Badge className="bg-primary text-primary-foreground">
-                    <Shield className="h-3 w-3 mr-1" />
-                    Vérifié
-                  </Badge>
+        {/* Welcome Hero */}
+        <div className="relative mb-8 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/10">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <Avatar className="h-20 w-20 ring-4 ring-background shadow-lg">
+                  <AvatarImage src={profile?.avatar_url} />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">
+                    {profile?.first_name?.charAt(0)}{profile?.last_name?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                {walkerProfile?.verified && (
+                  <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-primary rounded-full flex items-center justify-center ring-2 ring-background">
+                    <Shield className="h-4 w-4 text-primary-foreground" />
+                  </div>
                 )}
               </div>
-              <p className="text-muted-foreground">Tableau de bord promeneur</p>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-2xl md:text-3xl font-bold text-foreground">{profile?.first_name}</h1>
+                  {walkerProfile?.verified && (
+                    <Badge className="bg-primary text-primary-foreground gap-1">
+                      <Shield className="h-3 w-3" />
+                      Vérifié
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-muted-foreground">Tableau de bord promeneur</p>
+                {profile?.city && (
+                  <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                    <MapPin className="h-3 w-3" />
+                    {profile.city}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => navigate('/walker/earnings')}>
-              <Euro className="h-4 w-4 mr-2" />
-              Mes gains
-            </Button>
-            <Button variant="outline" onClick={() => navigate('/messages')}>
-              <MessageCircle className="h-4 w-4 mr-2" />
-              Messages
-            </Button>
-            <Button onClick={() => navigate('/profile')}>
-              Modifier mon profil
-            </Button>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="outline" onClick={() => navigate('/walker/earnings')} className="gap-2">
+                <Wallet className="h-4 w-4" />
+                Mes gains
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/messages')} className="gap-2">
+                <MessageCircle className="h-4 w-4" />
+                Messages
+              </Button>
+              <Button onClick={() => navigate('/profile')} className="gap-2 shadow-lg">
+                Modifier mon profil
+              </Button>
+            </div>
           </div>
         </div>
 
         {/* Verification Alert */}
-        {!walkerProfile?.is_verified && (
-          <Card className="mb-6 border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900">
-            <CardContent className="py-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-amber-600" />
-                  <div>
-                    <p className="font-medium">Compte en cours de vérification</p>
-                    <p className="text-sm text-muted-foreground">Soumettez vos documents pour être vérifié</p>
-                  </div>
+        {!walkerProfile?.verified && (
+          <Card className="mb-6 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 dark:border-amber-900">
+            <CardContent className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                  <Sparkles className="h-6 w-6 text-amber-600" />
                 </div>
-                <span className="text-lg font-bold text-amber-600">{verificationProgress()}%</span>
+                <div>
+                  <p className="font-semibold">Compte en cours de vérification</p>
+                  <p className="text-sm text-muted-foreground">Soumettez vos documents pour être vérifié et recevoir plus de demandes</p>
+                </div>
               </div>
-              <Progress value={verificationProgress()} className="h-2" />
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Progress value={verificationProgress()} className="w-24 h-2" />
+                  <span className="text-sm font-bold text-amber-600">{verificationProgress()}%</span>
+                </div>
+                <Button variant="outline" size="sm" className="gap-2">
+                  Compléter <ArrowRight className="h-3 w-3" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-900">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Gains ce mois</CardTitle>
-              <Euro className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Gains ce mois</CardTitle>
+              <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                <Euro className="h-5 w-5 text-green-600" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.monthlyEarnings.toFixed(2)}€</div>
-              <p className="text-xs text-muted-foreground">
-                +{stats.pendingEarnings.toFixed(2)}€ en attente
+              <div className="text-3xl font-bold text-green-600">{stats.monthlyEarnings.toFixed(2)}€</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                +<span className="font-semibold">{stats.pendingEarnings.toFixed(2)}€</span> en attente
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Promenades</CardTitle>
-              <DogIcon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalWalks}</div>
-              <p className="text-xs text-muted-foreground">{stats.completedThisMonth} ce mois</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Note moyenne</CardTitle>
-              <Star className="h-4 w-4 text-amber-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold flex items-center gap-1">
-                {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '-'}
-                <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Promenades</CardTitle>
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <DogIcon className="h-5 w-5 text-primary" />
               </div>
-              <p className="text-xs text-muted-foreground">{stats.totalReviews} avis</p>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{stats.totalWalks}</div>
+              <p className="text-xs text-muted-foreground mt-1">{stats.completedThisMonth} ce mois</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Taux d'acceptation</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Note moyenne</CardTitle>
+              <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                <Star className="h-5 w-5 text-amber-500" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.acceptanceRate}%</div>
-              <p className="text-xs text-muted-foreground">Réponse {stats.responseTime}</p>
+              <div className="text-3xl font-bold flex items-center gap-1">
+                {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '-'}
+                <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">{stats.totalReviews} avis</p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Taux d'acceptation</CardTitle>
+              <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-blue-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{stats.acceptanceRate}%</div>
+              <p className="text-xs text-muted-foreground mt-1">Réponse {stats.responseTime}</p>
             </CardContent>
           </Card>
         </div>
@@ -349,79 +365,91 @@ const WalkerDashboard = () => {
           <div className="lg:col-span-2 space-y-6">
             {/* Pending Requests */}
             {pendingRequests.length > 0 && (
-              <Card className="border-2 border-primary/20">
-                <CardHeader>
+              <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent overflow-hidden">
+                <CardHeader className="bg-primary/5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <AlertCircle className="h-5 w-5 text-primary" />
-                        Demandes en attente
+                      <CardTitle className="flex items-center gap-2 text-primary">
+                        <Bell className="h-5 w-5 animate-pulse" />
+                        Nouvelles demandes
                       </CardTitle>
-                      <CardDescription>{pendingRequests.length} demande(s) à traiter</CardDescription>
+                      <CardDescription>{pendingRequests.length} demande(s) en attente de réponse</CardDescription>
                     </div>
+                    <Badge className="bg-primary text-primary-foreground text-lg px-3 py-1">
+                      {pendingRequests.length}
+                    </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="p-0 divide-y">
                   {pendingRequests.map(booking => (
-                    <div key={booking.id} className="p-4 border-2 border-dashed border-primary/30 rounded-xl bg-primary/5">
-                      <div className="flex items-start justify-between mb-3">
+                    <div key={booking.id} className="p-4 md:p-6 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <Avatar>
+                          <Avatar className="h-12 w-12 ring-2 ring-background shadow">
                             <AvatarImage src={booking.owner?.avatar_url} />
-                            <AvatarFallback>{booking.owner?.first_name?.charAt(0)}</AvatarFallback>
+                            <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                              {booking.owner?.first_name?.charAt(0)}
+                            </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-semibold">{booking.owner?.first_name}</p>
+                            <p className="font-semibold text-lg">{booking.owner?.first_name}</p>
                             <p className="text-sm text-muted-foreground flex items-center gap-1">
                               <MapPin className="h-3 w-3" />
                               {booking.owner?.city || 'Non spécifié'}
                             </p>
                           </div>
                         </div>
-                        <Badge variant="outline">{getServiceLabel(booking.service_type)}</Badge>
+                        <Badge variant="outline" className="bg-background">{getServiceLabel(booking.service_type)}</Badge>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <DogIcon className="h-4 w-4 text-muted-foreground" />
-                          <span>{booking.dogs?.name} ({booking.dogs?.breed})</span>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 p-3 bg-muted/50 rounded-xl">
+                        <div className="flex items-center gap-2 text-sm">
+                          <DogIcon className="h-4 w-4 text-muted-foreground shrink-0" />
+                          <span className="truncate">{booking.dogs?.name}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span>{new Date(booking.scheduled_date).toLocaleDateString('fr-FR')}</span>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+                          <span>{new Date(booking.scheduled_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
+                        <div className="flex items-center gap-2 text-sm">
+                          <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
                           <span>{booking.scheduled_time} - {booking.duration_minutes}min</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Euro className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-semibold">{Number(booking.price || 0).toFixed(2)}€</span>
+                        <div className="flex items-center gap-2 text-sm font-semibold">
+                          <Euro className="h-4 w-4 text-green-600 shrink-0" />
+                          <span className="text-green-600">{Number(booking.price || 0).toFixed(2)}€</span>
                         </div>
                       </div>
 
-                      {booking.special_notes && (
-                        <p className="text-sm text-muted-foreground mb-4 p-2 bg-background rounded">
-                          "{booking.special_notes}"
+                      {booking.notes && (
+                        <p className="text-sm text-muted-foreground mb-4 p-3 bg-background rounded-lg border italic">
+                          "{booking.notes}"
                         </p>
                       )}
 
                       <div className="flex gap-3">
                         <Button 
-                          className="flex-1" 
+                          className="flex-1 gap-2" 
                           onClick={() => handleBookingAction(booking.id, 'confirmed')}
                         >
-                          <CheckCircle className="h-4 w-4 mr-2" />
+                          <CheckCircle className="h-4 w-4" />
                           Accepter
                         </Button>
                         <Button 
                           variant="outline" 
-                          className="flex-1"
+                          className="flex-1 gap-2"
                           onClick={() => handleBookingAction(booking.id, 'cancelled')}
                         >
-                          <XCircle className="h-4 w-4 mr-2" />
+                          <XCircle className="h-4 w-4" />
                           Refuser
                         </Button>
+                        {booking.owner?.phone && (
+                          <Button variant="outline" size="icon" asChild>
+                            <a href={`tel:${booking.owner.phone}`}>
+                              <Phone className="h-4 w-4" />
+                            </a>
+                          </Button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -430,50 +458,63 @@ const WalkerDashboard = () => {
             )}
 
             {/* Upcoming Bookings */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+            <Card className="overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between bg-muted/30">
                 <div>
-                  <CardTitle>Prochaines missions</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    Prochaines missions
+                  </CardTitle>
                   <CardDescription>{upcomingBookings.length} mission(s) confirmée(s)</CardDescription>
                 </div>
+                <Button variant="ghost" size="sm" className="gap-1">
+                  Voir tout <ChevronRight className="h-4 w-4" />
+                </Button>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 {upcomingBookings.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Calendar className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-30" />
-                    <h3 className="font-semibold mb-2">Aucune mission à venir</h3>
-                    <p className="text-muted-foreground">Vos prochaines réservations apparaîtront ici</p>
+                  <div className="text-center py-16 px-4">
+                    <div className="w-20 h-20 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
+                      <Calendar className="h-10 w-10 text-muted-foreground/50" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-2">Aucune mission à venir</h3>
+                    <p className="text-muted-foreground max-w-sm mx-auto">
+                      Vos prochaines réservations confirmées apparaîtront ici
+                    </p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="divide-y">
                     {upcomingBookings.map(booking => (
-                      <div key={booking.id} className="flex items-center gap-4 p-4 border rounded-xl">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <DogIcon className="h-4 w-4 text-muted-foreground" />
-                            <span className="font-semibold">{booking.dogs?.name}</span>
-                            <Badge variant="outline" className="text-xs">
+                      <div key={booking.id} className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={booking.dogs?.photo_url} />
+                          <AvatarFallback className="bg-primary/10 text-2xl">🐕</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-semibold truncate">{booking.dogs?.name}</span>
+                            <Badge variant="outline" className="text-xs shrink-0">
                               {getServiceLabel(booking.service_type)}
                             </Badge>
                           </div>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
-                              {new Date(booking.booking_date).toLocaleDateString('fr-FR', { 
+                              {new Date(booking.scheduled_date).toLocaleDateString('fr-FR', { 
                                 weekday: 'short', day: 'numeric', month: 'short' 
                               })}
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              {booking.start_time} - {booking.duration_minutes}min
+                              {booking.scheduled_time}
                             </span>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-bold">{Number(booking.total_price).toFixed(2)}€</p>
-                          <Button variant="outline" size="sm" className="mt-2">
-                            <Camera className="h-3 w-3 mr-1" />
-                            Envoyer preuve
+                        <div className="text-right shrink-0">
+                          <p className="font-bold text-lg text-green-600">{Number(booking.price || 0).toFixed(2)}€</p>
+                          <Button variant="outline" size="sm" className="mt-2 gap-1">
+                            <Camera className="h-3 w-3" />
+                            Preuve
                           </Button>
                         </div>
                       </div>
@@ -488,14 +529,14 @@ const WalkerDashboard = () => {
           <div className="space-y-6">
             {/* Documents Status */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
                   <FileText className="h-5 w-5" />
                   Documents
                 </CardTitle>
                 <CardDescription>Statut de vérification</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-2">
                 {[
                   { type: 'id_card', label: "Carte d'identité", required: true },
                   { type: 'criminal_record', label: 'Casier judiciaire', required: true },
@@ -504,21 +545,26 @@ const WalkerDashboard = () => {
                 ].map(doc => {
                   const status = getDocumentStatus(doc.type);
                   return (
-                    <div key={doc.type} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={doc.type} className="flex items-center justify-between p-3 border rounded-xl hover:bg-muted/50 transition-colors">
                       <div className="flex items-center gap-2">
-                        {status.status === 'approved' && <CheckCircle className="h-4 w-4 text-primary" />}
+                        {status.status === 'approved' && <CheckCircle className="h-4 w-4 text-green-600" />}
                         {status.status === 'pending' && <Clock className="h-4 w-4 text-amber-500" />}
                         {status.status === 'rejected' && <XCircle className="h-4 w-4 text-destructive" />}
                         {status.status === 'missing' && <AlertCircle className="h-4 w-4 text-muted-foreground" />}
                         <span className="text-sm">{doc.label}</span>
                         {doc.required && <span className="text-xs text-destructive">*</span>}
                       </div>
-                      <Badge variant={status.variant as any}>{status.label}</Badge>
+                      <Badge 
+                        variant={status.variant as any}
+                        className={status.status === 'approved' ? 'bg-green-100 text-green-700 border-green-200' : ''}
+                      >
+                        {status.label}
+                      </Badge>
                     </div>
                   );
                 })}
-                <Button variant="outline" className="w-full mt-3">
-                  <Upload className="h-4 w-4 mr-2" />
+                <Button variant="outline" className="w-full mt-3 gap-2">
+                  <Upload className="h-4 w-4" />
                   Soumettre un document
                 </Button>
               </CardContent>
@@ -526,27 +572,27 @@ const WalkerDashboard = () => {
 
             {/* Badges */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="h-5 w-5" />
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Award className="h-5 w-5 text-amber-500" />
                   Badges
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {badges.length === 0 ? (
-                  <div className="text-center py-6 text-muted-foreground">
-                    <Award className="h-10 w-10 mx-auto mb-2 opacity-30" />
-                    <p className="text-sm">Aucun badge pour le moment</p>
-                    <p className="text-xs">Complétez des missions pour en obtenir</p>
+                  <div className="text-center py-8">
+                    <Award className="h-12 w-12 mx-auto mb-2 text-muted-foreground/30" />
+                    <p className="text-sm text-muted-foreground">Aucun badge pour le moment</p>
+                    <p className="text-xs text-muted-foreground mt-1">Complétez des missions pour en obtenir</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     {badges.map(badge => (
-                      <div key={badge.id} className="text-center p-2">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-1">
-                          <Award className="h-6 w-6 text-primary" />
+                      <div key={badge.id} className="text-center p-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-2 shadow">
+                          <Award className="h-6 w-6 text-white" />
                         </div>
-                        <p className="text-xs">{badge.badge_type}</p>
+                        <p className="text-xs font-medium">{badge.badge_name}</p>
                       </div>
                     ))}
                   </div>
@@ -554,21 +600,37 @@ const WalkerDashboard = () => {
               </CardContent>
             </Card>
 
-            {/* My Services */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Mes tarifs</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {walkerProfile?.service_rates && Object.entries(walkerProfile.service_rates).map(([service, rate]) => (
-                  <div key={service} className="flex justify-between items-center text-sm">
-                    <span>{getServiceLabel(service)}</span>
-                    <span className="font-semibold">{String(rate)}€</span>
-                  </div>
-                ))}
-                <Button variant="link" className="w-full mt-2 p-0" onClick={() => navigate('/profile')}>
-                  Modifier mes tarifs →
+            {/* Quick Stats */}
+            <Card className="bg-muted/30">
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Tarif horaire</span>
+                  <span className="font-bold">{walkerProfile?.hourly_rate || 15}€/h</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Rayon d'action</span>
+                  <span className="font-bold">{walkerProfile?.service_radius_km || 5} km</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Chiens max</span>
+                  <span className="font-bold">{walkerProfile?.max_dogs || 3}</span>
+                </div>
+                <Button variant="link" className="w-full p-0 h-auto" onClick={() => navigate('/profile')}>
+                  Modifier mes paramètres →
                 </Button>
+              </CardContent>
+            </Card>
+
+            {/* Trust Badge */}
+            <Card className="bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <Shield className="h-10 w-10 text-primary" />
+                  <div>
+                    <p className="font-semibold">Plateforme sécurisée</p>
+                    <p className="text-xs text-muted-foreground">Paiements garantis sous 48h</p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
