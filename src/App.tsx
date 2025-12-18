@@ -29,6 +29,7 @@ import AllZones from "./pages/AllZones";
 import MentionsLegales from "./pages/MentionsLegales";
 import CGU from "./pages/CGU";
 import Confidentialite from "./pages/Confidentialite";
+import WalkerProfile from "./pages/WalkerProfile";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => (
             <Route path="/dogs/add" element={<AddDog />} />
             <Route path="/walkers" element={<FindWalkers />} />
             <Route path="/find-walkers" element={<FindWalkers />} />
+            <Route path="/walker/:walkerId" element={<WalkerProfile />} />
             <Route path="/bookings" element={<MyBookings />} />
             <Route path="/bookings/:id" element={<BookingDetails />} />
             <Route path="/book/:walkerId" element={<BookWalk />} />
