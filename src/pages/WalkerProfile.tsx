@@ -17,6 +17,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { SEOHead } from "@/components/ui/seo-head";
 
 interface WalkerProfile {
   id: string;
@@ -248,6 +249,11 @@ const WalkerProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`${walker.first_name || 'Promeneur'} - Promeneur de Chien à ${walker.city || 'France'} | DogWalking`}
+        description={`Réservez ${walker.first_name || 'un promeneur'} pour promener votre chien à ${walker.city || 'votre ville'}. Note: ${walker.rating || 5}/5, ${walker.total_walks || 0} promenades réalisées. Vérifié et assuré.`}
+        canonicalUrl={`https://dogwalking.fr/walker/${walkerId}`}
+      />
       <Header />
       <main className="container mx-auto px-4 py-24">
         {/* Hero Section */}

@@ -11,6 +11,7 @@ import { Star, MapPin, Euro, Search, Filter, Shield, Clock, Heart, CheckCircle }
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { SEOHead } from "@/components/ui/seo-head";
 
 interface WalkerWithProfile {
   id: string;
@@ -122,6 +123,12 @@ const FindWalkers = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Trouver un Promeneur de Chien Près de Chez Vous | DogWalking"
+        description="Recherchez et réservez un promeneur de chien professionnel vérifié dans votre ville. Filtrez par service, prix et disponibilité. Avis clients, profils vérifiés."
+        keywords="trouver promeneur chien, dog walker près de moi, réserver promenade chien, promeneur canin ville"
+        canonicalUrl="https://dogwalking.fr/walkers"
+      />
       <Header />
       <main className="container mx-auto px-4 py-24">
         {/* Header */}
