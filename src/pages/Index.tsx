@@ -10,10 +10,79 @@ import { TestimonialsSection } from "@/components/ui/testimonials-section";
 import { UserTypesSection } from "@/components/ui/user-types-section";
 import { LocalPresenceSection } from "@/components/ui/local-presence-section";
 import { Footer } from "@/components/ui/footer";
+import { SEOHead } from "@/components/ui/seo-head";
 
 const Index = () => {
+  const homeJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "DogWalking",
+    "description": "Plateforme de mise en relation entre propriétaires de chiens et promeneurs professionnels vérifiés. Promenade, garde, visite à domicile partout en France.",
+    "url": "https://dogwalking.fr",
+    "logo": "https://dogwalking.fr/logo.png",
+    "image": "https://dogwalking.fr/og-image.jpg",
+    "telephone": "+33-1-XX-XX-XX-XX",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "FR"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "48.8566",
+      "longitude": "2.3522"
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": "France"
+    },
+    "priceRange": "€€",
+    "openingHours": "Mo-Su 07:00-21:00",
+    "sameAs": [
+      "https://facebook.com/dogwalkingfr",
+      "https://instagram.com/dogwalkingfr",
+      "https://twitter.com/dogwalkingfr"
+    ],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Services de promenade et garde de chiens",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Promenade de chien",
+            "description": "Promenade individuelle ou en groupe avec un promeneur professionnel vérifié"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Garde de chien",
+            "description": "Garde à domicile ou chez le promeneur, courte ou longue durée"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Visite à domicile",
+            "description": "Visite et soins à domicile pour votre chien"
+          }
+        }
+      ]
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="DogWalking | Promeneurs de Chiens Professionnels Vérifiés en France"
+        description="Trouvez un promeneur de chien professionnel vérifié près de chez vous. Promenade, garde, visite à domicile. Paiement sécurisé, assurance incluse, suivi GPS en temps réel."
+        keywords="promeneur chien, dog walking, garde chien, promenade chien paris, dog sitter, pet sitting, promeneur canin professionnel"
+        canonicalUrl="https://dogwalking.fr"
+        structuredData={homeJsonLd}
+      />
       <Header />
       <main>
         <HeroSection />
