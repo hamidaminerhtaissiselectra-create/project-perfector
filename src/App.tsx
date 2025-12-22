@@ -30,6 +30,10 @@ import MentionsLegales from "./pages/MentionsLegales";
 import CGU from "./pages/CGU";
 import Confidentialite from "./pages/Confidentialite";
 import WalkerProfile from "./pages/WalkerProfile";
+import ServicePromenade from "./pages/services/ServicePromenade";
+import ServiceGarde from "./pages/services/ServiceGarde";
+import ServiceVisite from "./pages/services/ServiceVisite";
+import ProcheDeVous from "./pages/ProcheDeVous";
 
 const queryClient = new QueryClient();
 
