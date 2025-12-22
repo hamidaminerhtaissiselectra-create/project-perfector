@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { SEOHead } from "@/components/ui/seo-head";
 
 interface Conversation {
   id: string;
@@ -310,6 +311,11 @@ const Messages = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Mes Messages | DogWalking"
+        description="Communiquez en temps réel avec vos promeneurs de chiens. Messagerie sécurisée DogWalking."
+        canonicalUrl="https://dogwalking.fr/messages"
+      />
       <Header />
       <main className="container mx-auto px-4 py-24">
         <motion.h1 

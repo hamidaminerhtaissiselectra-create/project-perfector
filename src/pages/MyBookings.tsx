@@ -8,6 +8,7 @@ import { Calendar, Clock, MapPin, Dog as DogIcon } from 'lucide-react';
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { SEOHead } from "@/components/ui/seo-head";
 
 const MyBookings = () => {
   const navigate = useNavigate();
@@ -148,6 +149,11 @@ const MyBookings = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Mes Réservations | DogWalking"
+        description="Consultez et gérez toutes vos réservations de promenades de chien : à venir, terminées et annulées."
+        canonicalUrl="https://dogwalking.fr/bookings"
+      />
       <Header />
       <main className="container mx-auto px-4 py-24">
         <div className="mb-8">

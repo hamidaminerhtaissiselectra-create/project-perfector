@@ -13,6 +13,7 @@ import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { User, Mail, Phone, MapPin, Shield, Camera, Settings, Bell, CreditCard, LogOut } from "lucide-react";
+import { SEOHead } from "@/components/ui/seo-head";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -99,6 +100,11 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Mon Profil | DogWalking"
+        description="Gérez vos informations personnelles, paramètres de sécurité et préférences de notifications sur DogWalking."
+        canonicalUrl="https://dogwalking.fr/profile"
+      />
       <Header />
       <main className="container mx-auto px-4 py-24">
         <div className="max-w-4xl mx-auto">
