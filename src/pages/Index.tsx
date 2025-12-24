@@ -11,13 +11,20 @@ import { TrustSection } from "@/components/ui/trust-section";
 import { TestimonialsSection } from "@/components/ui/testimonials-section";
 import { UserTypesSection } from "@/components/ui/user-types-section";
 import { LocalPresenceSection } from "@/components/ui/local-presence-section";
+import { HomeIntroSection } from "@/components/ui/home-intro-section";
+import { HomeFAQSection } from "@/components/ui/home-faq-section";
 import { Footer } from "@/components/ui/footer";
+import { FloatingContact } from "@/components/ui/floating-contact";
 import { SEOHead } from "@/components/seo/SEOHead";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead />
+      <SEOHead
+        title="DogWalking | Promeneurs de Chiens Vérifiés en France | Paiement Sécurisé"
+        description="Trouvez un promeneur de chien vérifié près de chez vous. Paiement escrow sécurisé, preuves photo obligatoires, assurance incluse. La plateforme n°1 en France."
+        canonical="https://dogwalking.fr"
+      />
       <Header />
       <main>
         <HeroSection />
@@ -26,6 +33,7 @@ const Index = () => {
             <SearchForm />
           </div>
         </section>
+        <HomeIntroSection />
         <WhySection />
         <HowItWorksSection />
         <ServicesSection />
@@ -36,8 +44,10 @@ const Index = () => {
         <TestimonialsSection />
         <UserTypesSection />
         <LocalPresenceSection />
+        <HomeFAQSection />
       </main>
       <Footer />
+      <FloatingContact />
     </div>
   );
 };
