@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { useEffect } from "react";
 import Index from "./pages/Index";
+import ServicePage from "./pages/ServicePage";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AddDog from "./pages/AddDog";
@@ -30,10 +31,6 @@ import MentionsLegales from "./pages/MentionsLegales";
 import CGU from "./pages/CGU";
 import Confidentialite from "./pages/Confidentialite";
 import WalkerProfile from "./pages/WalkerProfile";
-import ServicePromenade from "./pages/services/ServicePromenade";
-import ServiceGarde from "./pages/services/ServiceGarde";
-import ServiceVisite from "./pages/services/ServiceVisite";
-import ProcheDeVous from "./pages/ProcheDeVous";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +55,7 @@ const App = () => (
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/services/:slug" element={<ServicePage />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dogs/add" element={<AddDog />} />

@@ -3,39 +3,51 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, Camera, ArrowRight, Dog, Home, Moon, Sun, Heart, Stethoscope, Car, PawPrint, Shield, Check } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
+// Import des images locales - utiliser les mêmes que servicesData
+import promenadeParc from '@/assets/services/promenade-chien-parc.jpg';
+import visiteRepas from '@/assets/services/visite-chien-repas.jpg';
+import hebergementNuit from '@/assets/services/hebergement-nuit-chambre.jpg';
+import garderieJour from '@/assets/services/garderie-salle-jeux.jpg';
+import gardeDomicile from '@/assets/services/garde-chien-domicile.jpg';
+import visiteSoins from '@/assets/services/visite-chien-soins.jpg';
+import vetAccompagnement from '@/assets/services/veterinaire-accompagnement.jpg';
+
 export const ServicesSection = () => {
   const navigate = useNavigate();
 
   const services = [
     {
       id: "promenade",
+      slug: "promenade-chien",
       title: "Promenade",
       description: "Promenade en extérieur adaptée aux besoins de votre chien. Exercice physique et stimulation mentale garantis.",
       minPrice: 8,
       duration: "30 min - 2h",
-      image: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=400&fit=crop",
+      image: promenadeParc,
       tags: ["Exercice adapté", "Preuves photo"],
       icon: Dog,
       benefits: ["Socialisation", "Dépense d'énergie"]
     },
     {
       id: "visite_domicile",
+      slug: "visite-domicile",
       title: "Visite à domicile",
       description: "Nourriture, eau fraîche et câlins pour vos animaux dans le confort de leur maison.",
       minPrice: 8,
       duration: "30 min",
-      image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&h=400&fit=crop",
+      image: visiteRepas,
       tags: ["Chiens & chats", "Soins quotidiens"],
       icon: Home,
       benefits: ["Routine préservée", "Moins de stress"]
     },
     {
       id: "hebergement_nuit",
+      slug: "hebergement-chien",
       title: "Hébergement nuit",
       description: "Votre chien passe la nuit chez le promeneur dans un environnement sécurisé et familial.",
       minPrice: 10,
       duration: "Nuit complète",
-      image: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=400&fit=crop",
+      image: hebergementNuit,
       tags: ["Env. familial", "Suivi régulier"],
       icon: Moon,
       benefits: ["Attention 24h", "Compagnie"],
@@ -43,44 +55,48 @@ export const ServicesSection = () => {
     },
     {
       id: "hebergement_jour",
+      slug: "garderie-chien",
       title: "Garderie de jour",
       description: "Garderie de jour chez le promeneur, idéal pour la socialisation et l'exercice en journée.",
       minPrice: 10,
       duration: "Journée",
-      image: "https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?w=600&h=400&fit=crop",
+      image: garderieJour,
       tags: ["Socialisation", "Activités variées"],
       icon: Sun,
       benefits: ["Jeux", "Stimulation"]
     },
     {
       id: "garde_domicile",
+      slug: "garde-domicile",
       title: "Garde à domicile",
       description: "Le promeneur reste chez vous la nuit pour garder votre chien dans son environnement habituel.",
       minPrice: 12,
       duration: "Nuit chez vous",
-      image: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600&h=400&fit=crop",
+      image: gardeDomicile,
       tags: ["Chez vous", "Routine préservée"],
       icon: Heart,
       benefits: ["Confort maison", "Sécurité"]
     },
     {
       id: "visite_sanitaire",
+      slug: "visite-sanitaire",
       title: "Visite sanitaire",
       description: "Entretien quotidien avec produits fournis par le propriétaire (brossage, soins, hygiène).",
       minPrice: 16,
       duration: "45 min",
-      image: "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&h=400&fit=crop",
+      image: visiteSoins,
       tags: ["Soins hygiène", "Brossage"],
       icon: Stethoscope,
       benefits: ["Bien-être", "Propreté"]
     },
     {
       id: "accompagnement_veterinaire",
+      slug: "accompagnement-veterinaire",
       title: "Accompagnement vétérinaire",
       description: "Transport et accompagnement de votre chien chez le vétérinaire pour ses rendez-vous.",
       minPrice: 13,
       duration: "Variable",
-      image: "https://images.unsplash.com/photo-1628009368231-7bb7cf0a65ea?w=600&h=400&fit=crop",
+      image: vetAccompagnement,
       tags: ["Transport inclus", "Compte-rendu"],
       icon: Car,
       benefits: ["Tranquillité", "Suivi santé"]
@@ -88,48 +104,49 @@ export const ServicesSection = () => {
   ];
 
   return (
-    <section id="services" className="py-12 md:py-16 px-4 bg-muted/30">
+    <section id="services" className="py-16 md:py-24 px-4 bg-muted/30">
       <div className="container mx-auto">
-        <div className="text-center mb-10 md:mb-12">
-          <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-medium mb-3">
-            <PawPrint className="h-3 w-3" />
+        <div className="text-center mb-12 md:mb-16">
+          <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+            <PawPrint className="h-4 w-4" />
             7 services disponibles
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3">Nos Services</h2>
-          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Nos Services</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Une gamme complète de services avec preuves photo/vidéo obligatoires et paiement escrow sécurisé
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6 max-w-7xl mx-auto">
           {services.map((service) => (
             <div 
               key={service.id}
-              className={`group bg-card rounded-2xl overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 border ${
+              className={`group bg-card rounded-3xl overflow-hidden shadow-soft hover:shadow-xl transition-all duration-500 border hover:-translate-y-1 ${
                 service.popular ? 'border-primary ring-2 ring-primary/20' : 'border-border/50'
               }`}
             >
               {/* Image */}
-              <div className="relative h-36 md:h-40 overflow-hidden">
+              <div className="relative h-44 md:h-48 overflow-hidden">
                 <img
                   src={service.image}
                   alt={service.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 {service.popular && (
-                  <div className="absolute top-2 left-2">
-                    <Badge className="bg-primary text-primary-foreground text-xs">
-                      Populaire
+                  <div className="absolute top-3 left-3">
+                    <Badge className="bg-primary text-primary-foreground text-xs px-3 py-1 shadow-lg">
+                      ⭐ Populaire
                     </Badge>
                   </div>
                 )}
-                <div className="absolute top-2 right-2">
-                  <Badge className="bg-white/90 text-foreground font-bold text-sm shadow-sm">
+                <div className="absolute top-3 right-3">
+                  <Badge className="bg-white/95 text-foreground font-bold text-sm shadow-md px-3 py-1">
                     dès {service.minPrice}€
                   </Badge>
                 </div>
-                <div className="absolute bottom-2 left-2">
-                  <Badge variant="secondary" className="bg-black/60 text-white text-xs">
+                <div className="absolute bottom-3 left-3">
+                  <Badge variant="secondary" className="bg-black/70 text-white text-xs backdrop-blur-sm">
                     <Clock className="h-3 w-3 mr-1" />
                     {service.duration}
                   </Badge>
@@ -137,21 +154,23 @@ export const ServicesSection = () => {
               </div>
 
               {/* Content */}
-              <div className="p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <service.icon className="h-5 w-5 text-primary" />
+              <div className="p-5">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <service.icon className="h-5 w-5 text-primary" />
+                  </div>
                   <h3 className="text-lg font-bold">{service.title}</h3>
                 </div>
-                <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-2 leading-relaxed">
                   {service.description}
                 </p>
 
                 {/* Benefits */}
-                <div className="flex flex-wrap gap-1.5 mb-3">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {service.benefits.map((benefit, index) => (
                     <span 
                       key={index} 
-                      className="inline-flex items-center gap-1 text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full"
+                      className="inline-flex items-center gap-1 text-xs text-primary bg-primary/10 px-2.5 py-1 rounded-full font-medium"
                     >
                       <Check className="h-3 w-3" />
                       {benefit}
@@ -160,10 +179,10 @@ export const ServicesSection = () => {
                 </div>
 
                 {/* Tags */}
-                <div className="flex flex-wrap gap-1.5 mb-3">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {service.tags.map((tag, index) => (
-                    <Badge key={index} variant="outline" className="text-xs font-normal py-0">
-                      {index === 0 && <Camera className="h-2.5 w-2.5 mr-1" />}
+                    <Badge key={index} variant="outline" className="text-xs font-normal py-0.5 px-2">
+                      {index === 0 && <Camera className="h-3 w-3 mr-1" />}
                       {tag}
                     </Badge>
                   ))}
@@ -173,9 +192,9 @@ export const ServicesSection = () => {
                   variant="ghost" 
                   size="sm"
                   className="p-0 h-auto font-semibold text-primary hover:text-primary/80 group/btn"
-                  onClick={() => navigate(`/walkers?service=${service.id}`)}
+                  onClick={() => navigate(`/services/${service.slug}`)}
                 >
-                  Réserver
+                  En savoir plus
                   <ArrowRight className="ml-1 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                 </Button>
               </div>
@@ -183,15 +202,15 @@ export const ServicesSection = () => {
           ))}
         </div>
 
-        <div className="mt-8 md:mt-10 text-center">
-          <div className="inline-flex items-center gap-2 bg-card rounded-xl px-4 py-3 shadow-soft border border-border mb-6">
-            <Shield className="h-5 w-5 text-primary" />
-            <span className="text-sm">
+        <div className="mt-12 md:mt-16 text-center">
+          <div className="inline-flex items-center gap-3 bg-card rounded-2xl px-6 py-4 shadow-soft border border-border mb-8">
+            <Shield className="h-6 w-6 text-primary" />
+            <span className="text-sm md:text-base">
               <strong>Garantie DogWalking :</strong> Preuves photo obligatoires + Paiement escrow + Commission 13%
             </span>
           </div>
           <div>
-            <Button size="lg" onClick={() => navigate('/walkers')}>
+            <Button size="lg" className="rounded-full px-8" onClick={() => navigate('/walkers')}>
               Voir tous les promeneurs
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>

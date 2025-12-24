@@ -11,7 +11,6 @@ import { Star, MapPin, Euro, Search, Filter, Shield, Clock, Heart, CheckCircle }
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { SEOHead } from "@/components/ui/seo-head";
 
 interface WalkerWithProfile {
   id: string;
@@ -123,12 +122,6 @@ const FindWalkers = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead
-        title="Trouver un Promeneur de Chien Près de Chez Vous | DogWalking"
-        description="Recherchez et réservez un promeneur de chien professionnel vérifié dans votre ville. Filtrez par service, prix et disponibilité. Avis clients, profils vérifiés."
-        keywords="trouver promeneur chien, dog walker près de moi, réserver promenade chien, promeneur canin ville"
-        canonicalUrl="https://dogwalking.fr/walkers"
-      />
       <Header />
       <main className="container mx-auto px-4 py-24">
         {/* Header */}
@@ -230,7 +223,11 @@ const FindWalkers = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {walkers.map((walker) => (
-              <Card key={walker.id} className="hover:shadow-lg transition-all duration-300 group overflow-hidden">
+              <Card 
+                key={walker.id} 
+                className="hover:shadow-lg transition-all duration-300 group overflow-hidden cursor-pointer"
+                onClick={() => navigate(`/walker/${walker.user_id}`)}
+              >
                 <CardContent className="p-0">
                   {/* Avatar section */}
                   <div className="relative bg-gradient-to-br from-primary/10 to-primary/5 p-6 text-center">
@@ -274,7 +271,12 @@ const FindWalkers = () => {
                           <span className="text-sm text-muted-foreground">({walker.total_reviews} avis)</span>
                         )}
                       </div>
-                      <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-rose-500">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-muted-foreground hover:text-rose-500"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <Heart className="h-5 w-5" />
                       </Button>
                     </div>
@@ -314,9 +316,27 @@ const FindWalkers = () => {
                         <span className="text-2xl font-bold text-primary">{walker.hourly_rate || 15}€</span>
                         <span className="text-sm text-muted-foreground">/30min</span>
                       </div>
-                      <Button onClick={() => navigate(`/book/${walker.user_id}`)}>
-                        Réserver
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/walker/${walker.user_id}`);
+                          }}
+                        >
+                          Voir profil
+                        </Button>
+                        <Button 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/book/${walker.user_id}`);
+                          }}
+                        >
+                          Réserver
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

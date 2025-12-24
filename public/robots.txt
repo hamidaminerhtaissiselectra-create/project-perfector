@@ -1,11 +1,13 @@
-# Robots.txt for DogWalking
-# https://dogwalking.fr
+# DogWalking - Robots.txt
+# Dernière mise à jour: 2024
 
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Twitterbot
 Allow: /
@@ -19,23 +21,12 @@ Allow: /
 # Sitemap
 Sitemap: https://dogwalking.fr/sitemap.xml
 
-# Disallow private/authenticated areas
+# Bloquer les pages privées
 Disallow: /dashboard
+Disallow: /walker/dashboard
+Disallow: /walker/earnings
+Disallow: /admin
 Disallow: /profile
 Disallow: /bookings
 Disallow: /messages
-Disallow: /dogs/
-Disallow: /book/
-Disallow: /admin
-
-# Allow important public pages
-Allow: /tarifs
-Allow: /securite
-Allow: /blog
-Allow: /walkers
-Allow: /walker/
-Allow: /devenir-promeneur
-Allow: /zones
-
-# Crawl-delay for polite crawling
-Crawl-delay: 1
+Disallow: /auth

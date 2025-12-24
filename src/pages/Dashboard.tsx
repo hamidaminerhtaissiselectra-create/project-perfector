@@ -15,7 +15,6 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
-import { SEOHead } from "@/components/ui/seo-head";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -198,11 +197,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <SEOHead
-        title="Mon Espace Propriétaire | DogWalking"
-        description="Gérez vos réservations, vos chiens et vos promeneurs favoris depuis votre tableau de bord DogWalking."
-        canonicalUrl="https://dogwalking.fr/dashboard"
-      />
       <Header />
       <main className="container mx-auto px-4 py-24">
         {/* Welcome Hero */}
