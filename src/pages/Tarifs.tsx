@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Shield, Lock, Camera, CreditCard, Clock, Award } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
+import { SEOHead } from "@/components/ui/seo-head";
+import { SEOFAQ } from "@/components/ui/seo-faq";
+import tarifsHero from "@/assets/pages/tarifs-hero.jpg";
 
 const Tarifs = () => {
   const navigate = useNavigate();
@@ -60,21 +63,60 @@ const Tarifs = () => {
     { icon: CreditCard, title: "Commission 13%", description: "Tout inclus : assurance, support, plateforme" }
   ];
 
+  const faqItems = [
+    {
+      question: "Comment sont calculés les tarifs sur DogWalking ?",
+      answer: "Nous fixons des tarifs minimums garantis pour chaque type de service (à partir de 8€). Chaque promeneur est ensuite libre de fixer ses propres tarifs au-dessus de ces minimums, en fonction de son expérience et de ses services."
+    },
+    {
+      question: "Que comprend la commission de 13% ?",
+      answer: "La commission DogWalking de 13% inclut l'assurance responsabilité civile jusqu'à 2M€, le support client, la plateforme sécurisée, le système de paiement escrow et la gestion des preuves photo/vidéo."
+    },
+    {
+      question: "Puis-je donner un pourboire au promeneur ?",
+      answer: "Oui, vous pouvez donner un pourboire à votre promeneur après chaque prestation. Les pourboires sont 100% reversés au promeneur sans commission."
+    },
+    {
+      question: "Quand suis-je débité pour une réservation ?",
+      answer: "Le paiement est effectué au moment de la réservation mais reste bloqué en escrow. Il n'est libéré au promeneur qu'après validation de la preuve de prestation (photo/vidéo obligatoire)."
+    },
+    {
+      question: "Puis-je annuler une réservation et être remboursé ?",
+      answer: "Oui, vous pouvez annuler gratuitement jusqu'à 24h avant la prestation prévue. Passé ce délai, des frais d'annulation peuvent s'appliquer selon les conditions du promeneur."
+    },
+    {
+      question: "L'abonnement PRO est-il obligatoire pour les promeneurs ?",
+      answer: "Non, l'abonnement PRO (6-12€/mois) est optionnel. Il offre des avantages supplémentaires comme une mise en avant dans les résultats, des badges premium et des statistiques avancées."
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Tarifs DogWalking | Prix Promenade Chien, Garde, Visite à Domicile"
+        description="Découvrez nos tarifs transparents : promenade dès 8€, garde dès 10€, visite à domicile dès 8€. Commission 13% tout inclus avec assurance et paiement sécurisé."
+        canonicalUrl="https://dogwalking.fr/tarifs"
+      />
       <Header />
       <main className="container mx-auto px-4 pt-20 pb-12">
-        {/* Hero */}
-        <div className="text-center mb-10 md:mb-12">
-          <span className="inline-block bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-medium mb-3">
-            Tarifs transparents
-          </span>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3">Nos Services & Tarifs</h1>
-          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Tarifs minimums garantis. Commission DogWalking : 13% (assurance + support inclus).
-          </p>
+        {/* Hero with image */}
+        <div className="relative rounded-2xl overflow-hidden mb-10 md:mb-12">
+          <img 
+            src={tarifsHero} 
+            alt="Réservation et paiement sécurisé sur l'application DogWalking" 
+            className="w-full h-48 md:h-64 object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
+            <span className="inline-block bg-primary/10 backdrop-blur text-primary px-4 py-1 rounded-full text-sm font-medium mb-3">
+              Tarifs transparents
+            </span>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3">Nos Services & Tarifs</h1>
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+              Tarifs minimums garantis. Commission DogWalking : 13% (assurance + support inclus).
+            </p>
+          </div>
         </div>
-
         {/* Guarantees */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto mb-10 md:mb-12">
           {guarantees.map((item, index) => (
@@ -176,9 +218,15 @@ const Tarifs = () => {
             </CardContent>
           </Card>
 
-          <p className="text-center text-xs text-muted-foreground">
+          <p className="text-center text-xs text-muted-foreground mb-12">
             * Tarifs minimums garantis. Chaque promeneur fixe ses propres tarifs. Pourboires possibles.
           </p>
+
+          {/* FAQ Section */}
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-center mb-8">Questions fréquentes sur les tarifs</h2>
+            <SEOFAQ faqs={faqItems} title="" />
+          </div>
         </div>
       </main>
       <Footer />
