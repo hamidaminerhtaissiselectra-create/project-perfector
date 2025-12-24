@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar, User, ArrowRight, Search, Clock } from 'lucide-react';
+import { SEOHead } from "@/components/ui/seo-head";
+import blogHero from "@/assets/pages/blog-hero.jpg";
 
 const Blog = () => {
   const featuredArticle = {
@@ -78,15 +80,28 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Blog DogWalking | Conseils Chien, Santé Canine, Éducation et Bien-être"
+        description="Découvrez nos articles d'experts sur la santé canine, l'éducation, la nutrition et le bien-être de votre chien. Astuces pratiques et conseils de professionnels."
+        canonicalUrl="https://dogwalking.fr/blog"
+      />
       <Header />
       <main className="container mx-auto px-4 py-24">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog DogWalking</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Conseils d'experts, astuces pratiques et actualités pour le bien-être de votre chien
-            </p>
+          {/* Header with image */}
+          <div className="relative rounded-2xl overflow-hidden mb-12">
+            <img 
+              src={blogHero} 
+              alt="Blog DogWalking - Conseils et articles sur les chiens" 
+              className="w-full h-48 md:h-64 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog DogWalking</h1>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Conseils d'experts, astuces pratiques et actualités pour le bien-être de votre chien
+              </p>
+            </div>
           </div>
 
           {/* Search and filters */}

@@ -4,9 +4,39 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Shield, FileCheck, Lock, Users, Camera, Phone, CheckCircle, BadgeCheck, CreditCard, Clock } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
+import { SEOHead } from "@/components/ui/seo-head";
+import { SEOFAQ } from "@/components/ui/seo-faq";
+import securiteHero from "@/assets/pages/securite-hero.jpg";
 
 const Securite = () => {
   const navigate = useNavigate();
+
+  const faqItems = [
+    {
+      question: "Comment vérifiez-vous l'identité des promeneurs ?",
+      answer: "Chaque promeneur doit fournir une pièce d'identité officielle (CNI ou passeport) qui est vérifiée manuellement par notre équipe. Nous vérifions également la cohérence des informations avec le profil créé."
+    },
+    {
+      question: "Qu'est-ce que le paiement escrow et comment fonctionne-t-il ?",
+      answer: "Le paiement escrow est un système de séquestre sécurisé. Lorsque vous réservez, votre paiement est bloqué sur un compte sécurisé pendant 24-48h. Il n'est libéré au promeneur qu'après réception et validation de la preuve de prestation (photo/vidéo)."
+    },
+    {
+      question: "Quelle assurance couvre les prestations DogWalking ?",
+      answer: "Tous nos promeneurs disposent d'une assurance responsabilité civile couvrant les prestations jusqu'à 2 millions d'euros. Cette assurance protège votre chien, le promeneur et les tiers en cas d'incident."
+    },
+    {
+      question: "Que se passe-t-il si le promeneur n'envoie pas de preuve ?",
+      answer: "Sans preuve photo/vidéo obligatoire, le paiement reste bloqué et vous êtes automatiquement remboursé. C'est notre garantie de tranquillité d'esprit."
+    },
+    {
+      question: "Comment signaler un problème pendant ou après une prestation ?",
+      answer: "Vous pouvez nous contacter via la messagerie intégrée, par email ou téléphone. Notre équipe support est disponible pour traiter tout litige et assurer une médiation si nécessaire."
+    },
+    {
+      question: "Les promeneurs ont-ils un casier judiciaire vérifié ?",
+      answer: "Oui, nous demandons une attestation de non-antécédent ou un extrait de casier judiciaire à tous nos promeneurs avant leur validation sur la plateforme."
+    }
+  ];
 
   const features = [
     {
@@ -76,18 +106,31 @@ const Securite = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Sécurité DogWalking | Promeneurs Vérifiés, Paiement Escrow, Assurance 2M€"
+        description="Découvrez comment DogWalking garantit votre sécurité : vérification d'identité, casier judiciaire, assurance RC 2M€, paiement escrow et preuves photo obligatoires."
+        canonicalUrl="https://dogwalking.fr/securite"
+      />
       <Header />
       <main className="container mx-auto px-4 py-24">
         <div className="max-w-5xl mx-auto">
-          {/* Hero */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
-              <Shield className="h-8 w-8 text-primary" />
+          {/* Hero with image */}
+          <div className="relative rounded-2xl overflow-hidden mb-16">
+            <img 
+              src={securiteHero} 
+              alt="Promeneur vérifié DogWalking avec badge de confiance" 
+              className="w-full h-64 md:h-80 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 backdrop-blur mb-4">
+                <Shield className="h-8 w-8 text-primary" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">Votre sécurité, notre priorité</h1>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Nous mettons tout en œuvre pour garantir la sécurité de votre chien et votre tranquillité d'esprit à chaque prestation.
+              </p>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Votre sécurité, notre priorité</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Nous mettons tout en œuvre pour garantir la sécurité de votre chien et votre tranquillité d'esprit à chaque prestation.
-            </p>
           </div>
 
           {/* Process */}
@@ -199,6 +242,12 @@ const Securite = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* FAQ Section */}
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold text-center mb-8">Questions fréquentes sur la sécurité</h2>
+            <SEOFAQ faqs={faqItems} title="" />
+          </div>
 
           {/* CTA */}
           <div className="text-center mt-12">
