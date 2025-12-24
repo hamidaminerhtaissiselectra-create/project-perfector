@@ -31,6 +31,11 @@ import MentionsLegales from "./pages/MentionsLegales";
 import CGU from "./pages/CGU";
 import Confidentialite from "./pages/Confidentialite";
 import WalkerProfile from "./pages/WalkerProfile";
+import QuiSommesNous from "./pages/QuiSommesNous";
+import ProcheDeVous from "./pages/ProcheDeVous";
+import ServicePromenade from "./pages/services/ServicePromenade";
+import ServiceGarde from "./pages/services/ServiceGarde";
+import ServiceVisite from "./pages/services/ServiceVisite";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +61,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/services/:slug" element={<ServicePage />} />
+            {/* Service Pillar Pages */}
+            <Route path="/services/promenade" element={<ServicePromenade />} />
+            <Route path="/services/garde" element={<ServiceGarde />} />
+            <Route path="/services/visite" element={<ServiceVisite />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dogs/add" element={<AddDog />} />
@@ -75,6 +84,9 @@ const App = () => (
             <Route path="/blog" element={<Blog />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/referral" element={<Referral />} />
+            {/* About & Regional SEO */}
+            <Route path="/qui-sommes-nous" element={<QuiSommesNous />} />
+            <Route path="/pres-de-vous" element={<ProcheDeVous />} />
             {/* Local SEO Pages */}
             <Route path="/zones" element={<AllZones />} />
             <Route path="/zone/:slug" element={<LocalZone />} />

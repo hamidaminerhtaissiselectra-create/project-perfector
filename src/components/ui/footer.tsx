@@ -4,7 +4,7 @@ export const Footer = () => {
   return (
     <footer className="bg-earthy text-white py-10 md:py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
@@ -28,15 +28,26 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Services */}
+          {/* Nos Services */}
           <div>
-            <h3 className="font-semibold mb-3 text-sm uppercase tracking-wider">Services</h3>
+            <h3 className="font-semibold mb-3 text-sm uppercase tracking-wider">Nos Services</h3>
+            <ul className="space-y-2 text-sm text-white/70">
+              <li><a href="/services/promenade" className="hover:text-white transition-colors">Promenade de chien</a></li>
+              <li><a href="/services/garde" className="hover:text-white transition-colors">Garde de chien</a></li>
+              <li><a href="/services/visite" className="hover:text-white transition-colors">Visite à domicile</a></li>
+              <li><a href="/tarifs" className="hover:text-white transition-colors">Nos tarifs</a></li>
+              <li><a href="/pres-de-vous" className="hover:text-white transition-colors">Près de chez vous</a></li>
+            </ul>
+          </div>
+
+          {/* Propriétaires */}
+          <div>
+            <h3 className="font-semibold mb-3 text-sm uppercase tracking-wider">Propriétaires</h3>
             <ul className="space-y-2 text-sm text-white/70">
               <li><a href="/walkers" className="hover:text-white transition-colors">Trouver un promeneur</a></li>
-              <li><a href="/walker/register" className="hover:text-white transition-colors">Devenir promeneur</a></li>
-              <li><a href="/tarifs" className="hover:text-white transition-colors">Nos tarifs</a></li>
               <li><a href="/securite" className="hover:text-white transition-colors">Notre sécurité</a></li>
-              <li><a href="/zones" className="hover:text-white transition-colors">Nos zones d'intervention</a></li>
+              <li><a href="/zones" className="hover:text-white transition-colors">Zones d'intervention</a></li>
+              <li><a href="/referral" className="hover:text-white transition-colors">Parrainage</a></li>
             </ul>
           </div>
 
@@ -44,9 +55,9 @@ export const Footer = () => {
           <div>
             <h3 className="font-semibold mb-3 text-sm uppercase tracking-wider">Ressources</h3>
             <ul className="space-y-2 text-sm text-white/70">
+              <li><a href="/qui-sommes-nous" className="hover:text-white transition-colors">Qui sommes-nous</a></li>
               <li><a href="/blog" className="hover:text-white transition-colors">Blog</a></li>
-              <li><a href="/#comment-ca-marche" className="hover:text-white transition-colors">Comment ça marche</a></li>
-              <li><a href="/referral" className="hover:text-white transition-colors">Parrainage</a></li>
+              <li><a href="/walker/register" className="hover:text-white transition-colors">Devenir promeneur</a></li>
               <li><a href="/auth" className="hover:text-white transition-colors">Connexion</a></li>
             </ul>
           </div>
