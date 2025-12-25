@@ -15,6 +15,12 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { FloatingContact } from "@/components/ui/floating-contact";
+
+// Hero image
+import heroImage from "@/assets/pages/dashboard-walker-hero.jpg";
 
 const WalkerDashboard = () => {
   const navigate = useNavigate();
@@ -219,11 +225,24 @@ const WalkerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      <SEOHead
+        title="Tableau de Bord Promeneur | DogWalking"
+        description="Gérez vos missions, vos gains et vos clients depuis votre espace promeneur professionnel DogWalking."
+      />
       <Header />
       <main className="container mx-auto px-4 py-24">
-        {/* Welcome Hero */}
-        <div className="relative mb-8 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        {/* Welcome Hero with animation */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="relative mb-8 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/10 overflow-hidden"
+        >
+          {/* Background image subtle */}
+          <div className="absolute inset-0 opacity-5">
+            <img src={heroImage} alt="" className="w-full h-full object-cover" />
+          </div>
+          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Avatar className="h-20 w-20 ring-4 ring-background shadow-lg">
@@ -271,7 +290,7 @@ const WalkerDashboard = () => {
               </Button>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Verification Alert */}
         {!walkerProfile?.verified && (
@@ -637,6 +656,7 @@ const WalkerDashboard = () => {
         </div>
       </main>
       <Footer />
+      <FloatingContact />
     </div>
   );
 };
