@@ -1,111 +1,201 @@
 import { motion } from "framer-motion";
-import { Shield, Heart, Star, Clock, MapPin, Camera, Lock, Award } from "lucide-react";
-import { Card, CardContent } from "./card";
+import { Shield, Camera, Lock, Award, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Button } from "./button";
+import { useNavigate } from "react-router-dom";
+
+// Import images
+import verificationBadge from "@/assets/trust/verification-badge.jpg";
+import photoProof from "@/assets/homepage/photo-proof.jpg";
+import validationPayment from "@/assets/homepage/validation-payment.jpg";
+import happyFamilyDog from "@/assets/homepage/happy-family-dog.jpg";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
 
 export const HomeIntroSection = () => {
+  const navigate = useNavigate();
+
+  const features = [
+    {
+      icon: Shield,
+      title: "Promeneurs 100% Vérifiés",
+      description: "Chaque promeneur fournit une pièce d'identité, un casier judiciaire vierge et une assurance RC professionnelle. Notre équipe vérifie manuellement chaque candidature.",
+      highlight: "Seuls 35% des candidats acceptés",
+      image: verificationBadge,
+      color: "from-emerald-500/20 to-teal-500/20"
+    },
+    {
+      icon: Lock,
+      title: "Paiement Escrow Sécurisé",
+      description: "Votre argent reste bloqué jusqu'à réception des preuves photo/vidéo de la prestation. Sans validation, vous êtes automatiquement remboursé.",
+      highlight: "Innovation unique en France",
+      image: validationPayment,
+      color: "from-blue-500/20 to-indigo-500/20"
+    },
+    {
+      icon: Camera,
+      title: "Preuves Photo Obligatoires",
+      description: "À chaque mission, le promeneur envoie des photos et vidéos de votre chien via notre plateforme sécurisée. Suivez les aventures de votre compagnon.",
+      highlight: "Transparence totale",
+      image: photoProof,
+      color: "from-amber-500/20 to-orange-500/20"
+    },
+    {
+      icon: Award,
+      title: "Assurance Premium Incluse",
+      description: "Chaque promenade est couverte par une assurance jusqu'à 2 millions d'euros. En cas d'incident, notre équipe gère toutes les démarches.",
+      highlight: "Protection 100% sans frais",
+      image: happyFamilyDog,
+      color: "from-purple-500/20 to-pink-500/20"
+    }
+  ];
+
   return (
-    <section className="py-16 bg-background">
+    <section className="py-20 bg-gradient-to-b from-background via-muted/30 to-background overflow-hidden">
       <div className="container mx-auto px-4">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
         >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              DogWalking : La Plateforme de Confiance pour Votre Chien
-            </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Fondée en 2023, DogWalking est née d'un constat simple : les propriétaires de chiens 
-              méritent une solution fiable, sécurisée et transparente pour faire promener leur 
-              compagnon. Fini les annonces douteuses et les prestataires non vérifiés. Avec DogWalking, 
-              chaque promeneur est rigoureusement sélectionné, chaque prestation est documentée, 
-              et chaque paiement est protégé.
-            </p>
+          <span className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+            Pourquoi nous choisir
+          </span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text">
+            La Plateforme de Confiance pour Votre Chien
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Fondée en 2023, DogWalking est née d'un constat simple : les propriétaires de chiens 
+            méritent une solution <strong className="text-foreground">fiable, sécurisée et transparente</strong> pour faire promener leur compagnon.
+          </p>
+        </motion.div>
+
+        {/* Features Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid md:grid-cols-2 gap-6 lg:gap-8 mb-16"
+        >
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="group relative bg-card rounded-3xl overflow-hidden border border-border/50 shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              {/* Background gradient */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+              
+              <div className="relative flex flex-col lg:flex-row">
+                {/* Image */}
+                <div className="lg:w-2/5 h-48 lg:h-auto relative overflow-hidden">
+                  <motion.img
+                    src={feature.image}
+                    alt={feature.title}
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.4 }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-card via-card/50 to-transparent" />
+                </div>
+
+                {/* Content */}
+                <div className="lg:w-3/5 p-6 lg:p-8 flex flex-col justify-center">
+                  <div className="flex items-center gap-3 mb-4">
+                    <motion.div 
+                      className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center"
+                      whileHover={{ rotate: 5, scale: 1.1 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <feature.icon className="h-6 w-6 text-primary" />
+                    </motion.div>
+                    <h3 className="text-xl font-bold">{feature.title}</h3>
+                  </div>
+                  
+                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                    {feature.description}
+                  </p>
+                  
+                  <div className="flex items-center gap-2 text-primary font-semibold">
+                    <CheckCircle2 className="h-5 w-5" />
+                    <span>{feature.highlight}</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Stats Banner */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="relative bg-gradient-to-r from-primary via-primary to-primary/80 rounded-3xl p-8 lg:p-12 text-primary-foreground overflow-hidden"
+        >
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+          
+          <div className="relative grid md:grid-cols-3 gap-8 text-center mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="text-4xl lg:text-5xl font-bold mb-2">50 000+</div>
+              <div className="text-primary-foreground/80">Promenades réalisées</div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="text-4xl lg:text-5xl font-bold mb-2">4.9/5</div>
+              <div className="text-primary-foreground/80">Note moyenne</div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="text-4xl lg:text-5xl font-bold mb-2">2 000+</div>
+              <div className="text-primary-foreground/80">Promeneurs vérifiés</div>
+            </motion.div>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-6 mb-12">
-            <Card className="border-2 hover:border-primary/30 transition-colors">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Shield className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2">Promeneurs 100% Vérifiés</h3>
-                    <p className="text-muted-foreground">
-                      Chaque promeneur fournit une pièce d'identité, un casier judiciaire vierge et 
-                      une assurance RC professionnelle. Notre équipe vérifie manuellement chaque candidature. 
-                      Seuls 35% des candidats sont acceptés après ce processus exigeant.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary/30 transition-colors">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Lock className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2">Paiement Escrow Sécurisé</h3>
-                    <p className="text-muted-foreground">
-                      Votre argent reste bloqué jusqu'à réception des preuves photo/vidéo de la prestation. 
-                      Sans validation, vous êtes automatiquement remboursé. Une innovation unique sur le 
-                      marché français du pet-sitting qui garantit votre tranquillité.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary/30 transition-colors">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Camera className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2">Preuves Photo Obligatoires</h3>
-                    <p className="text-muted-foreground">
-                      À chaque mission, le promeneur doit envoyer des photos et vidéos de votre chien 
-                      via notre plateforme sécurisée. Vous suivez les aventures de votre compagnon 
-                      et validez la prestation en toute connaissance de cause.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary/30 transition-colors">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Award className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2">Assurance Premium Incluse</h3>
-                    <p className="text-muted-foreground">
-                      Chaque promenade est couverte par une assurance jusqu'à 2 millions d'euros. 
-                      En cas d'incident, notre équipe gère toutes les démarches avec l'assureur. 
-                      Votre chien est protégé à 100%, sans frais supplémentaires.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center">
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Avec plus de <strong>50 000 promenades réalisées</strong> et une note moyenne de 
-              <strong> 4.9/5</strong>, DogWalking est devenue la référence nationale pour le bien-être 
-              canin. Rejoignez les milliers de propriétaires qui nous font confiance et offrez à 
-              votre chien l'attention qu'il mérite, même quand vous êtes occupé.
+          
+          <div className="relative text-center">
+            <p className="text-lg text-primary-foreground/90 mb-6 max-w-2xl mx-auto">
+              Rejoignez les milliers de propriétaires qui nous font confiance et offrez à votre chien l'attention qu'il mérite.
             </p>
+            <Button 
+              size="lg" 
+              variant="secondary"
+              onClick={() => navigate("/trouver-promeneurs")}
+              className="group"
+            >
+              Trouver un promeneur
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
         </motion.div>
       </div>
