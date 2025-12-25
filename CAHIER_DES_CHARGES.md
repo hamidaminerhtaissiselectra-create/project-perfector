@@ -1,177 +1,174 @@
-# 📋 CAHIER DES CHARGES COMPLET - DOGWALKING
+# 📋 CAHIER DES CHARGES COMPLET - DOGWALKING v2.0
 
 ## 📌 Informations Générales
 
 | Élément | Valeur |
 |---------|--------|
 | **Nom du projet** | DogWalking |
-| **Type** | Plateforme de mise en relation |
+| **Type** | Plateforme de mise en relation B2C |
 | **Cibles** | Propriétaires de chiens + Promeneurs professionnels |
+| **Marché** | France métropolitaine |
 | **Stack technique** | React 18 + TypeScript + Vite + Tailwind CSS + Supabase |
-| **Date mise à jour** | 24 Décembre 2024 |
-| **Progression** | ~95% |
+| **Date création** | Décembre 2024 |
+| **Date mise à jour** | 25 Décembre 2024 |
+| **Progression globale** | ~97% |
 
 ---
 
-## 🎯 OBJECTIFS DU SITE
+## 🎯 VISION & OBJECTIFS
+
+### Mission
+Devenir la plateforme de référence en France pour la promenade et la garde de chiens, en garantissant sécurité, transparence et qualité de service.
 
 ### Double parcours utilisateur
-1. **Propriétaires de chiens** → Trouver et réserver un promeneur de confiance
-2. **Promeneurs professionnels** → S'inscrire, être vérifié, recevoir des missions
 
-### Propositions de valeur
-- Promeneurs vérifiés (CNI, casier, assurance)
-- Paiement sécurisé par escrow
-- Assurance jusqu'à 2M€
-- Suivi en temps réel
-- Messagerie intégrée
+**1. Propriétaires de chiens (B2C)**
+- Trouver un promeneur de confiance près de chez eux
+- Réserver en toute sécurité
+- Suivre les prestations en temps réel
+- Gérer plusieurs chiens
+
+**2. Promeneurs professionnels (B2B)**
+- S'inscrire et être vérifié
+- Gérer son planning et ses revenus
+- Développer sa clientèle locale
+- Obtenir des badges de reconnaissance
+
+### Propositions de valeur uniques
+
+| Différenciateur | Description |
+|-----------------|-------------|
+| **Vérification complète** | CNI + casier judiciaire + assurance RC |
+| **Paiement escrow** | Argent bloqué jusqu'à validation de la prestation |
+| **Preuves obligatoires** | Photo/vidéo obligatoire à chaque mission |
+| **Assurance 2M€** | Couverture complète incluse |
+| **Inscription différée** | Explorer et configurer avant de créer un compte |
 
 ---
 
-## ✅ FONCTIONNALITÉS RÉALISÉES
+## ✅ FONCTIONNALITÉS RÉALISÉES (97%)
 
 ### 🏠 Pages Publiques (100%)
 
-| Page | Route | SEO | FAQ | Mots | Images |
-|------|-------|-----|-----|------|--------|
-| Accueil | `/` | ✅ SEOHead + Schema LocalBusiness | ✅ 5 questions | ~2500 | ✅ Hero + sections |
-| Tarifs | `/tarifs` | ✅ SEOHead + Schema | ✅ 6 questions | ~1600 | ✅ Hero unique |
-| Sécurité | `/securite` | ✅ SEOHead + Schema | ✅ 6 questions | ~1800 | ✅ Hero unique |
-| Blog | `/blog` | ✅ SEOHead + Schema Blog | - | ~1200 | ✅ Hero + articles |
-| Qui sommes-nous | `/qui-sommes-nous` | ✅ SEOHead | ✅ 5 questions | ~900 | ✅ Hero équipe |
-| Près de chez vous | `/proche-de-vous` | ✅ SEOHead | - | ~1000 | ✅ Carte France |
-| Devenir Promeneur | `/devenir-promeneur` | ✅ SEOHead | ✅ 7 questions | ~1100 | ✅ Hero unique |
-| Trouver Promeneurs | `/walkers` | ✅ SEOHead | - | ~400 | ✅ Hero recherche |
-| Profil Promeneur | `/walker/:id` | ✅ SEOHead dynamique | - | Dynamique | ✅ Avatar |
-| CGU | `/cgu` | ⚪ | - | - | - |
-| Confidentialité | `/confidentialite` | ⚪ | - | - | - |
-| Mentions Légales | `/mentions-legales` | ⚪ | - | - | - |
-| Zones | `/zones` | ⚪ | - | - | - |
-| Authentification | `/auth` | ⚪ | - | - | - |
+| Page | Route | SEO | FAQ | Mots | Images | Status |
+|------|-------|-----|-----|------|--------|--------|
+| Accueil | `/` | ✅ Schema LocalBusiness | ✅ 5 questions | ~2500 | ✅ Hero + 8 sections | ✅ |
+| Tarifs | `/tarifs` | ✅ SEOHead + Schema | ✅ 6 questions | ~1600 | ✅ Hero unique | ✅ |
+| Sécurité | `/securite` | ✅ SEOHead + Schema | ✅ 6 questions | ~1800 | ✅ Hero unique | ✅ |
+| Blog | `/blog` | ✅ Schema Blog | - | ~1200 | ✅ Hero + articles | ✅ |
+| Qui sommes-nous | `/qui-sommes-nous` | ✅ SEOHead | ✅ 5 questions | ~900 | ✅ Hero équipe | ✅ |
+| Près de chez vous | `/pres-de-vous` | ✅ SEOHead | - | ~1000 | ✅ Carte France | ✅ |
+| Trouver Promeneurs | `/walkers` | ✅ SEOHead | - | Dynamique | ✅ Hero + cards | ✅ |
+| Profil Promeneur | `/walker/:id` | ✅ Dynamique | - | Dynamique | ✅ Avatar | ✅ |
+| CGU | `/cgu` | ⚪ | - | - | - | ✅ |
+| Confidentialité | `/confidentialite` | ⚪ | - | - | - | ✅ |
+| Mentions Légales | `/mentions-legales` | ⚪ | - | - | - | ✅ |
 
 ### 🐕 Pages Services Piliers SEO (100%)
 
-| Page | Route | Mots | FAQ | Images |
-|------|-------|------|-----|--------|
-| Service Promenade | `/services/promenade` | ~1500 | ✅ 6 questions | ✅ 4 uniques |
-| Service Garde | `/services/garde` | ~1500 | ✅ 6 questions | ✅ 4 uniques |
-| Service Visite | `/services/visite` | ~1500 | ✅ 6 questions | ✅ 4 uniques |
+| Page | Route | Mots | FAQ | Images | Status |
+|------|-------|------|-----|--------|--------|
+| Service Promenade | `/services/promenade` | ~1500 | ✅ 6 questions | ✅ 4 uniques | ✅ |
+| Service Garde | `/services/garde` | ~1500 | ✅ 6 questions | ✅ 4 uniques | ✅ |
+| Service Visite | `/services/visite` | ~1500 | ✅ 6 questions | ✅ 4 uniques | ✅ |
 
 ### 👤 Espace Propriétaire (100%)
 
-| Fonctionnalité | Route | SEO | Status |
-|---------------|-------|-----|--------|
-| Dashboard | `/dashboard` | ✅ SEOHead | ✅ Complet |
-| Mon Profil | `/profile` | ✅ SEOHead | ✅ Complet |
-| Mes Réservations | `/bookings` | ✅ SEOHead | ✅ Complet |
-| Messages | `/messages` | ✅ SEOHead | ✅ Temps réel Supabase |
-| Ajouter un chien | `/dogs/add` | ⚪ | ✅ Complet |
-| Réserver | `/book/:walkerId` | ⚪ | ✅ Complet |
-| Parrainage | `/referral` | ⚪ | ✅ Complet |
+| Fonctionnalité | Route | SEO | Animations | Status |
+|---------------|-------|-----|------------|--------|
+| Dashboard | `/dashboard` | ✅ | ✅ Framer Motion | ✅ |
+| Mon Profil | `/profile` | ✅ | ✅ Transitions | ✅ |
+| Mes Réservations | `/bookings` | ✅ | ✅ | ✅ |
+| Messages | `/messages` | ✅ | ✅ Temps réel | ✅ |
+| Ajouter un chien | `/dogs/add` | ⚪ | ✅ | ✅ |
+| Réserver | `/book/:walkerId` | ⚪ | ✅ Multi-étapes | ✅ |
+| Parrainage | `/referral` | ⚪ | ✅ | ✅ |
 
 ### 🚶 Espace Promeneur (100%)
 
 | Fonctionnalité | Route | Status |
 |---------------|-------|--------|
-| Dashboard Promeneur | `/walker-dashboard` | ✅ Complet |
-| Mes Revenus | `/walker-earnings` | ✅ Complet |
-| Profil Public | `/walker/:id` | ✅ Complet + SEO dynamique |
+| Dashboard Promeneur | `/walker/dashboard` | ✅ Complet avec stats |
+| Mes Revenus | `/walker/earnings` | ✅ Graphiques inclus |
+| Profil Public | `/walker/:id` | ✅ SEO dynamique |
+| Inscription | `/walker/register` | ✅ Formulaire complet |
 
 ### 🔐 Authentification (100%)
 
-| Fonctionnalité | Status |
-|---------------|--------|
-| Inscription email | ✅ |
-| Connexion email | ✅ |
-| Récupération mot de passe | ✅ |
-| Protection routes | ✅ |
-| Gestion sessions | ✅ |
+| Fonctionnalité | Status | Notes |
+|---------------|--------|-------|
+| Inscription email | ✅ | Avec validation |
+| Connexion email | ✅ | Erreurs en français |
+| Inscription différée | ✅ | Réservation avant compte |
+| Redirection post-auth | ✅ | Retour à l'action en cours |
+| Protection routes | ✅ | HOC + redirections |
+| Gestion sessions | ✅ | Persistance localStorage |
 
 ### 💾 Base de données Supabase (100%)
 
-| Table | RLS | Description |
-|-------|-----|-------------|
-| `profiles` | ✅ | Profils utilisateurs |
-| `dogs` | ✅ | Chiens enregistrés |
-| `walker_profiles` | ✅ | Profils promeneurs |
-| `walker_documents` | ✅ | Documents vérification |
-| `walker_badges` | ✅ | Badges et distinctions |
-| `walker_earnings` | ✅ | Revenus promeneurs |
-| `bookings` | ✅ | Réservations |
-| `messages` | ✅ | Messages temps réel |
-| `notifications` | ✅ | Notifications |
-| `reviews` | ✅ | Avis et notes |
-| `favorites` | ✅ | Promeneurs favoris |
-| `referrals` | ✅ | Parrainages |
-| `user_roles` | ✅ | Rôles (admin, user) |
-
-### 📦 Storage Supabase (100%)
-
-| Bucket | Public | Description |
-|--------|--------|-------------|
-| `dog-photos` | ✅ Oui | Photos des chiens |
-| `avatars` | ✅ Oui | Photos de profil |
-| `walker-documents` | ❌ Non | Documents confidentiels |
-| `walk-proofs` | ❌ Non | Preuves de promenade |
+| Table | RLS | Triggers | Description |
+|-------|-----|----------|-------------|
+| `profiles` | ✅ | ✅ on_auth_user_created | Profils utilisateurs |
+| `dogs` | ✅ | - | Chiens enregistrés |
+| `walker_profiles` | ✅ | - | Profils promeneurs détaillés |
+| `walker_documents` | ✅ | - | Documents à vérifier |
+| `walker_badges` | ✅ | - | Badges et distinctions |
+| `walker_earnings` | ✅ | - | Revenus promeneurs |
+| `bookings` | ✅ | - | Réservations |
+| `messages` | ✅ | - | Messages temps réel |
+| `notifications` | ✅ | - | Notifications système |
+| `reviews` | ✅ | - | Avis et notes |
+| `favorites` | ✅ | - | Promeneurs favoris |
+| `referrals` | ✅ | - | Système parrainage |
+| `user_roles` | ✅ | - | Rôles (admin, user) |
 
 ### 🎨 Design System (100%)
 
 | Élément | Status | Détails |
 |---------|--------|---------|
-| Tokens HSL | ✅ | Variables CSS sémantiques |
-| Composants Shadcn | ✅ | Personnalisés |
-| Animations Framer Motion | ✅ | Parallaxe, fade, stagger |
-| Mode sombre | ✅ | Support complet |
-| Responsive | ✅ | Mobile-first |
-| Accessibilité | ✅ | ARIA, focus visible |
-| Bulle flottante contact | ✅ | Composant réutilisable |
+| Tokens HSL | ✅ | Variables CSS sémantiques complètes |
+| Composants Shadcn | ✅ | 50+ composants personnalisés |
+| Animations Framer Motion | ✅ | Parallaxe, fade, stagger, hover |
+| Mode sombre | ✅ | Support complet automatique |
+| Responsive | ✅ | Mobile-first, breakpoints cohérents |
+| Accessibilité | ✅ | ARIA, focus visible, navigation clavier |
+| Bulle flottante contact | ✅ | Animation pulsante, 3 options |
 
-### 🔍 SEO Technique (100%)
-
-| Élément | Status |
-|---------|--------|
-| Sitemap XML | ✅ `/sitemap.xml` |
-| Robots.txt | ✅ Optimisé |
-| Meta titles uniques | ✅ Toutes pages |
-| Meta descriptions | ✅ Toutes pages |
-| Open Graph | ✅ Via SEOHead |
-| Twitter Cards | ✅ Via SEOHead |
-| Schema.org JSON-LD | ✅ LocalBusiness, Blog, FAQ, Service |
-| Canonical URLs | ✅ Toutes pages |
-| Alt images | ✅ Descriptifs |
-
-### 🖼️ Images (100%)
+### 🖼️ Images Générées (100%)
 
 | Catégorie | Fichiers | Localisation |
 |-----------|----------|--------------|
-| Pages principales | 8 images | `src/assets/pages/` |
+| Pages principales | 12 images | `src/assets/pages/` |
 | Homepage | 5 images | `src/assets/homepage/` |
 | Services | 28 images | `src/assets/services/` |
 | Testimonials | 2 images | `src/assets/testimonials/` |
 | Trust | 2 images | `src/assets/trust/` |
-| Hero principal | 1 image | `src/assets/hero-dog-walking.jpg` |
+| **Total** | **49 images** | - |
 
 ---
 
-## 🟠 À FAIRE - PRIORITÉ HAUTE
+## 🟠 À FAIRE - PRIORITÉ HAUTE (3%)
 
 ### 💳 Intégration Stripe (Paiement Escrow)
 
-| Tâche | Priorité | Complexité |
-|-------|----------|------------|
-| Activer intégration Stripe | 🔴 Haute | Faible |
-| Créer edge function `create-checkout` | 🔴 Haute | Moyenne |
-| Créer edge function `stripe-webhook` | 🔴 Haute | Moyenne |
-| Système escrow 24-48h | 🔴 Haute | Haute |
-| Libération paiement sur preuve | 🔴 Haute | Haute |
-| Dashboard revenus promeneur | ✅ Fait | - |
+| Tâche | Priorité | Complexité | Status |
+|-------|----------|------------|--------|
+| Activer intégration Stripe | 🔴 Haute | Faible | ⚪ |
+| Edge function `create-checkout` | 🔴 Haute | Moyenne | ⚪ |
+| Edge function `stripe-webhook` | 🔴 Haute | Moyenne | ⚪ |
+| Système escrow 24-48h | 🔴 Haute | Haute | ⚪ |
+| Libération paiement sur preuve | 🔴 Haute | Haute | ⚪ |
 
 **Flux paiement attendu :**
-```
-1. Client réserve → Paiement Stripe → Argent bloqué (escrow)
-2. Promeneur effectue prestation → Envoie preuve photo/vidéo
-3. Délai 24-48h → Argent libéré au promeneur (moins 13% commission)
-4. Si pas de preuve → Remboursement automatique client
+```mermaid
+graph TD
+    A[Client réserve] --> B[Paiement Stripe]
+    B --> C[Argent bloqué escrow]
+    C --> D[Promeneur effectue mission]
+    D --> E[Envoi preuve photo/vidéo]
+    E --> F{Validation 24-48h}
+    F -->|OK| G[Argent libéré -13% commission]
+    F -->|Pas de preuve| H[Remboursement client]
 ```
 
 ### 📧 Emails Transactionnels
@@ -180,165 +177,30 @@
 |-------|-------------|----------|
 | Confirmation inscription | Création compte | 🔴 Haute |
 | Nouvelle réservation | Booking créé | 🔴 Haute |
-| Rappel promenade J-1 | Cron 24h avant | 🟠 Moyenne |
-| Preuve envoyée | Preuve uploadée | 🟠 Moyenne |
+| Confirmation promeneur | Booking accepté | 🔴 Haute |
+| Rappel J-1 | Cron 24h avant | 🟠 Moyenne |
+| Preuve reçue | Photo uploadée | 🟠 Moyenne |
 | Paiement reçu | Escrow libéré | 🔴 Haute |
-| Nouveau message | Message reçu | 🟠 Moyenne |
-
-**Configuration requise :** SMTP (Resend, SendGrid, ou Mailgun)
-
----
-
-## 🟡 À FAIRE - PRIORITÉ MOYENNE
-
-### 📊 Fonctionnalités Additionnelles
-
-| Fonctionnalité | Status | Notes |
-|---------------|--------|-------|
-| Upload documents promeneur | ⚪ | Storage Supabase |
-| Validation admin documents | ⚪ | Dashboard admin |
-| Notifications push | ⚪ | Web Push API |
-| Suivi GPS temps réel | ⚪ | Geolocation API |
-| Export factures PDF | ⚪ | jsPDF ou serveur |
-| Système de parrainage complet | ⚪ | Codes + rewards |
-
-### 🔒 Sécurité Avancée
-
-| Élément | Status |
-|---------|--------|
-| Rate limiting API | ⚪ |
-| Validation côté serveur | ⚪ |
-| Audit logs | ⚪ |
-| 2FA | ⚪ |
-
----
-
-## 📁 STRUCTURE DES FICHIERS
-
-```
-src/
-├── assets/
-│   ├── pages/                    # ✅ Images pages principales (8)
-│   ├── homepage/                 # ✅ Images homepage (5)
-│   ├── services/                 # ✅ Images services (28)
-│   ├── testimonials/             # ✅ Images témoignages (2)
-│   ├── trust/                    # ✅ Images confiance (2)
-│   ├── hero-dog-walking.jpg      # ✅ Hero principal
-│   ├── local-services.jpg
-│   ├── service-garde.jpg
-│   ├── service-promenade.jpg
-│   └── service-visite.jpg
-├── components/
-│   ├── seo/
-│   │   └── SEOHead.tsx           # ✅ Composant SEO principal
-│   └── ui/
-│       ├── header.tsx
-│       ├── footer.tsx            # ✅ Footer 5 colonnes
-│       ├── hero-section.tsx
-│       ├── services-section.tsx
-│       ├── features-section.tsx
-│       ├── testimonials-section.tsx
-│       ├── local-presence-section.tsx
-│       ├── how-it-works-section.tsx
-│       ├── trust-section.tsx
-│       ├── dogwalking-protect.tsx
-│       ├── user-types-section.tsx
-│       ├── home-intro-section.tsx    # ✅ SEO accueil
-│       ├── home-faq-section.tsx      # ✅ FAQ accueil
-│       ├── floating-contact.tsx      # ✅ Bulle contact
-│       ├── seo-head.tsx              # ✅ Composant SEO
-│       ├── seo-faq.tsx               # ✅ Composant FAQ
-│       ├── animated-section.tsx
-│       └── [shadcn components]
-├── pages/
-│   ├── Index.tsx                 # ✅ SEO complet + FAQ
-│   ├── Tarifs.tsx                # ✅ SEO + FAQ + image
-│   ├── Securite.tsx              # ✅ SEO + FAQ + image
-│   ├── Blog.tsx                  # ✅ SEO + image
-│   ├── QuiSommesNous.tsx         # ✅ SEO + FAQ + image
-│   ├── ProcheDeVous.tsx          # ✅ SEO + image
-│   ├── WalkerRegister.tsx        # ✅ SEO + FAQ
-│   ├── FindWalkers.tsx           # ✅ SEO
-│   ├── WalkerProfile.tsx         # ✅ SEO dynamique
-│   ├── Dashboard.tsx             # ✅ SEO
-│   ├── Profile.tsx               # ✅ SEO
-│   ├── MyBookings.tsx            # ✅ SEO
-│   ├── Messages.tsx              # ✅ SEO
-│   ├── WalkerDashboard.tsx
-│   ├── WalkerEarnings.tsx
-│   ├── services/
-│   │   ├── ServicePromenade.tsx  # ✅ 1500 mots + FAQ + images
-│   │   ├── ServiceGarde.tsx      # ✅ 1500 mots + FAQ + images
-│   │   └── ServiceVisite.tsx     # ✅ 1500 mots + FAQ + images
-│   ├── Auth.tsx
-│   ├── AddDog.tsx
-│   ├── BookWalk.tsx
-│   ├── BookingDetails.tsx
-│   ├── Referral.tsx
-│   ├── CGU.tsx
-│   ├── Confidentialite.tsx
-│   ├── MentionsLegales.tsx
-│   ├── AllZones.tsx
-│   ├── LocalZone.tsx
-│   └── NotFound.tsx
-├── hooks/
-│   ├── use-toast.ts
-│   ├── use-mobile.tsx
-│   ├── useParallax.tsx
-│   └── useScrollToTop.tsx
-├── integrations/
-│   └── supabase/
-│       ├── client.ts
-│       └── types.ts              # Auto-généré
-├── data/
-│   ├── localSeoData.ts
-│   └── servicesData.ts
-├── lib/
-│   └── utils.ts
-├── index.css                     # ✅ Design tokens HSL
-├── App.tsx                       # ✅ Toutes routes configurées
-└── main.tsx
-
-public/
-├── sitemap.xml                   # ✅ Sitemap SEO
-├── robots.txt                    # ✅ Robots optimisé
-├── favicon.ico
-└── placeholder.svg
-
-supabase/
-├── config.toml
-├── functions/
-│   └── geolocation/
-│       └── index.ts
-└── migrations/                   # Auto-géré
-```
 
 ---
 
 ## 🔧 CONFIGURATION REQUISE
 
-### Secrets configurés (Supabase)
+### Secrets Supabase
 
 | Secret | Usage | Status |
 |--------|-------|--------|
-| `SUPABASE_URL` | Connexion DB | ✅ Configuré |
-| `SUPABASE_ANON_KEY` | Connexion DB | ✅ Configuré |
-| `SUPABASE_SERVICE_ROLE_KEY` | Admin | ✅ Configuré |
-| `SUPABASE_DB_URL` | DB directe | ✅ Configuré |
+| `SUPABASE_URL` | Connexion DB | ✅ |
+| `SUPABASE_ANON_KEY` | Connexion DB | ✅ |
+| `SUPABASE_SERVICE_ROLE_KEY` | Admin | ✅ |
+| `SUPABASE_DB_URL` | DB directe | ✅ |
 | `STRIPE_SECRET_KEY` | Paiements | ⚪ À ajouter |
 | `STRIPE_WEBHOOK_SECRET` | Webhooks | ⚪ À ajouter |
 | `RESEND_API_KEY` | Emails | ⚪ À ajouter |
 
-### Variables d'environnement
-
-```env
-VITE_SUPABASE_URL=https://aqitjhaotpautjywoeys.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-
 ---
 
-## 📈 MÉTRIQUES SEO ATTEINTES
+## 📈 MÉTRIQUES SEO
 
 | Métrique | Cible | Status |
 |----------|-------|--------|
@@ -346,60 +208,71 @@ VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 | Pages avec H1 unique | 100% | ✅ 100% |
 | Images avec alt | 100% | ✅ 100% |
 | Sitemap à jour | Oui | ✅ |
-| Schema.org | Pages clés | ✅ FAQ + Service |
-| Core Web Vitals | Vert | 🟡 À vérifier |
+| Schema.org | Pages clés | ✅ |
 | Mobile-friendly | Oui | ✅ |
 | Contenu piliers SEO | 1300-1600 mots | ✅ |
 | FAQ Schema.org | Pages services | ✅ |
-| Images uniques par page | 100% | ✅ |
 
 ---
 
-## 📅 PROCHAINES ÉTAPES RECOMMANDÉES
+## 📅 ROADMAP
 
-### Sprint 1 (Priorité immédiate)
-1. ✅ ~~SEO toutes pages~~
-2. ✅ ~~Sitemap XML~~
-3. ✅ ~~Pages services piliers~~
-4. ✅ ~~FAQ sur toutes pages clés~~
-5. ✅ ~~Images uniques~~
-6. 🔴 Activer Stripe
-7. 🔴 Créer edge functions paiement
-8. 🔴 Configurer emails transactionnels
+### ✅ Sprint 1 - MVP (Terminé)
+- [x] Architecture projet
+- [x] Authentification
+- [x] Pages publiques
+- [x] Recherche promeneurs
+- [x] Système de réservation
+- [x] Dashboards
+- [x] Messagerie
+- [x] SEO complet
 
-### Sprint 2 (Après Sprint 1)
-1. Upload et validation documents promeneurs
-2. Système de preuves photos/vidéos
-3. Notifications push
-4. Tests E2E
+### 🔜 Sprint 2 - Paiement (À venir)
+- [ ] Intégration Stripe
+- [ ] Système escrow
+- [ ] Emails transactionnels
+- [ ] Upload documents promeneurs
 
-### Sprint 3 (Optimisation)
-1. Analytics et tracking
-2. A/B testing
-3. Performance optimization
-4. Suivi GPS temps réel
+### 📋 Sprint 3 - Optimisation
+- [ ] Analytics
+- [ ] A/B testing
+- [ ] Performance
+- [ ] PWA mobile
 
 ---
 
-## 📝 NOTES IMPORTANTES
+## 📝 STANDARDS DE CODE
 
-### Règles SEO appliquées
-- ✅ Aucune duplication d'images entre pages
-- ✅ Parcours propriétaire et promeneur distincts
-- ✅ Pas de pages locales par ville (stratégie zone)
-- ✅ FAQ avec Schema.org sur pages services
-- ✅ Contenu 1300-1600 mots sur pages piliers
-- ✅ Images uniques générées pour chaque page
-- ✅ Page "Près de chez vous" pour SEO régional
-
-### Standards de code
-- TypeScript strict
+### Conventions
+- TypeScript strict (no any)
 - Composants fonctionnels React
 - Hooks personnalisés réutilisables
-- Design tokens CSS HSL (pas de couleurs hardcodées)
+- Design tokens CSS HSL uniquement
 - Imports absolus via `@/`
+- Composants < 300 lignes
+
+### Structure des composants
+```tsx
+// 1. Imports
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+
+// 2. Types/Interfaces
+interface Props { ... }
+
+// 3. Composant
+const Component = ({ prop }: Props) => {
+  // 3.1 Hooks
+  // 3.2 Handlers
+  // 3.3 Render
+  return (...)
+};
+
+// 4. Export
+export default Component;
+```
 
 ---
 
-*Document généré le 24 Décembre 2024*
-*Dernière mise à jour : Session courante*
+*Document généré le 25 Décembre 2024*
+*Version 2.0 - Mise à jour complète UX/UI*
